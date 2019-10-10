@@ -38,4 +38,6 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/sedes');
+
 module.exports = app;
