@@ -58,7 +58,7 @@ const userSchema = new Schema({
     totalVote: Number,
   }
 }
-});
+);
 const benchSchema = new Schema({
   description: String,
   creationDate: { type: Date, default: Date.now  }, // Default value
