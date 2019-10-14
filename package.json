@@ -14,5 +14,8 @@
     "mongodb": "^3.3.2",
     "mongoose": "^5.7.4",
     "morgan": "~1.9.1"
+  },
+  "devDependencies": {
+    "dotenv": "^8.1.0"
   }
 }
