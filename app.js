@@ -79,6 +79,52 @@ const voteSchema = new Schema({
     userid : Number,
   }
 });
+/////////////////////////////////ROUTER/////////////////////////////////
+
+///////////////USER///////////////
+/* POST new user */
+router.post('/users', function(req, res, next) {
+  // Create a new document from the JSON in the request body
+  const newUser = new User(req.body);
+  // Save that document
+  newUser.save(function(err, savedUser) {
+    if (err) {
+      return next(err);
+    }
+    // Send the saved document in the response
+    res.send(savedUser);
+  });
+});
+
+///////////////BENCH///////////////
+/* POST new bench */
+router.post('/benches', function(req, res, next) {
+  // Create a new document from the JSON in the request body
+  const newBench = new Bench(req.body);
+  // Save that document
+  newBench.save(function(err, savedBench) {
+    if (err) {
+      return next(err);
+    }
+    // Send the saved document in the response
+    res.send(savedBench);
+  });
+});
+
+///////////////VOTE///////////////
+/* POST new vote */
+router.post('/votes', function(req, res, next) {
+  // Create a new document from the JSON in the request body
+  const newVote = new Vote(req.body);
+  // Save that document
+  newVote.save(function(err, savedVote) {
+    if (err) {
+      return next(err);
+    }
+    // Send the saved document in the response
+    res.send(savedVote);
+  });
+});
 
 mongoose.model('User', userSchema);
 mongoose.model('Bench', benchSchema);
