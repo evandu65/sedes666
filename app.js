@@ -79,3 +79,7 @@ const voteSchema = new Schema({
     userid : Number,
   }
 });
+
+mongoose.model('User', userSchema);
+mongoose.model('Bench', benchSchema);
+mongoose.model('Vote', voteSchema);
