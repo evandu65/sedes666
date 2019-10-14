@@ -66,16 +66,16 @@ const benchSchema = new Schema({
   meta: { // Nested document
     backrest: Boolean,
     material: String,
-    seats : BigInt,
-    longitude : Float32Array,
-    latitude : Float32Array,
-    score : BigInt,
+    seats : Number,
+    longitude : Number,
+    latitude : Number,
+    score : Number,
   }
 });
 const voteSchema = new Schema({
   type: Boolean,
   voteDate: { type: Date, default: Date.now  }, // Default value
   meta: { // Nested document
-    userid : Int32Array,
+    userid : Number,
   }
 });
