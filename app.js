@@ -47,10 +47,12 @@ const userSchema = new Schema({
   username: {
     type: String,
     unique: true,
-    index: {
-        unique: true
-    },
-  password: String,
+    required: true,
+  },
+  password: {
+    type : String,
+    required: true
+  },
   registrationDate: { type: Date, default: Date.now  }, // Default value
   meta: { // Nested document
     totalVote: Number,
