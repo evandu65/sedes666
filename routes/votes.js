@@ -1,8 +1,9 @@
 var express = require('express');
 var router = express.Router();
+const Vote = require('../models/vote');
 
 /* POST new vote */
-router.post('/votes', function(req, res, next) {
+router.post('/', function(req, res, next) {
   // Create a new document from the JSON in the request body
   const newVote = new Vote(req.body);
   // Save that document
