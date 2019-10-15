@@ -7,6 +7,8 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var benchesRouter = require('./routes/benches');
+var votesRouter = require('./routes/routes');
 
 var app = express();
 
@@ -22,6 +24,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/votes', votesRouter);
+app.use('/benches', benchesRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -39,7 +43,11 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/sedes');
+mongoose.connect(
+  process.env.MONGODB_URI || 'mongodb://localhost/sedes',
+{useNewUrlParser: true, useUnifiedTopology: true},
+() => console.log('connected to db')
+);
 
 module.exports = app;
 

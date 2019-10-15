@@ -1,8 +1,9 @@
 var express = require('express');
 var router = express.Router();
+const Bench = require('../models/bench');
 
 /* POST new bench */
-router.post('/benches', function(req, res, next) {
+router.post('/', function(req, res, next) {
     // Create a new document from the JSON in the request body
     const newBench = new Bench(req.body);
     // Save that document

@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+const User = require('../models/user');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -7,7 +8,7 @@ router.get('/', function(req, res, next) {
 });
 
 /* POST new user */
-router.post('/users', function(req, res, next) {
+router.post('/', function(req, res, next) {
   // Create a new document from the JSON in the request body
   const newUser = new User(req.body);
   // Save that document
