@@ -42,44 +42,8 @@ app.use(function(err, req, res, next) {
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/sedes');
 
 module.exports = app;
-const Schema = mongoose.Schema;
-const userSchema = new Schema({
-  username: {
-    type: String,
-    unique: true,
-    required: true,
-  },
-  password: {
-    type : String,
-    required: true
-  },
-  registrationDate: { type: Date, default: Date.now  }, // Default value
-  meta: { // Nested document
-    totalVote: Number,
-  }
-}
-);
-const benchSchema = new Schema({
-  description: String,
-  creationDate: { type: Date, default: Date.now  }, // Default value
-  modifDate: { type: Date, default: Date.now  }, // Default value
-  meta: { // Nested document
-    backrest: Boolean,
-    material: String,
-    seats : Number,
-    longitude : Number,
-    latitude : Number,
-    score : Number,
-  }
-});
-const voteSchema = new Schema({
-  type: Boolean,
-  voteDate: { type: Date, default: Date.now  }, // Default value
-  meta: { // Nested document
-    userid : Number,
-  }
-});
 
-mongoose.model('User', userSchema);
-mongoose.model('Bench', benchSchema);
-mongoose.model('Vote', voteSchema);
+
+
+
+
