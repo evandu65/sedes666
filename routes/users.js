@@ -4,7 +4,12 @@ const User = require('../models/user');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+  User.find().sort('name').exec(function(err, users) {
+    if (err) {
+      return next(err);
+    }
+    res.send(users);
+  });
 });
 
 /* POST new user */
@@ -17,6 +22,7 @@ router.post('/', function(req, res, next) {
       return next(err);
     }
     // Send the saved document in the response
+    console.log(savedUser)
     res.send(savedUser);
   });
 });
