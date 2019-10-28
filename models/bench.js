@@ -9,7 +9,7 @@ const benchSchema = new Schema({
     score  :{ type : Number, default : 0}, // Default score value
     backrest: Boolean,
     material: ['Wood','Metal','Stone','Marble','Plastic'],
-    ergonomy : [1,2,3,4,5],
+    ergonomy : ['1','2','3','4','5'],
     seats : Number,
     image : String,
     location : {
