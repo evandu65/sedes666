@@ -2,6 +2,15 @@ var express = require('express');
 var router = express.Router();
 const Bench = require('../models/bench');
 
+/* GET benches listing. */
+router.get('/', function (req, res, next) {
+  Bench.find().sort('score').exec(function (err, benches) {
+    if (err) {
+      return next(err);
+    }
+    res.send(benches);
+  });
+});
 /* POST new bench */
 router.post('/', function(req, res, next) {
     // Create a new document from the JSON in the request body
