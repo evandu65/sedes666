@@ -18,4 +18,5 @@ const benchSchema = new Schema({
     }
   });
 
+
   module.exports = mongoose.model('Bench', benchSchema);
