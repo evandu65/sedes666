@@ -32,7 +32,7 @@ router.post('/', function (req, res, next) {
       }
       // Send the saved document in the response
       console.log(savedUser)
-      res.send(savedUser);
+      res.send(`Welcome ${savedUser.username}`);
     });
   });
 });
