@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
-  User.find().sort('name').exec(function (err, users) {
+  User.find().sort('username').exec(function (err, users) {
     if (err) {
       return next(err);
     }
@@ -18,7 +18,7 @@ router.post('/', function (req, res, next) {
 
   //encrypt the password
 
-  const plainPassword = 'changeme';
+  const plainPassword = req.body.password;
   const saltRounds = 10;
   bcrypt.hash(plainPassword, saltRounds, function (err, hashedPassword) {
 
@@ -50,7 +50,7 @@ router.post('/login', function (req, res, next) {
       if (err) {
         return next(err);
       } else if (!valid) {
-        console.log("pas bon");
+        console.log("nul");
         return res.sendStatus(401);
       }
       // Login is valid...
