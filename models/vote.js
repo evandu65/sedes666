@@ -1,12 +1,11 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-
+var ObjectId = mongoose.Schema.Types.ObjectId;
 const voteSchema = new Schema({
     type: Boolean,
     voteDate: { type: Date, default: Date.now  }, // Default value
-    meta: { // Nested document
-      userid : Number,
-    }
+    userid : ObjectId,
+    
+    // Ajouter validation
   });
-
-  module.exports = mongoose.model('Vote', voteSchema);
+   module.exports = mongoose.model('Vote', voteSchema);
