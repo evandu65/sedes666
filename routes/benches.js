@@ -24,5 +24,6 @@ router.post('/', function(req, res, next) {
       res.send(savedBench);
     });
   });
+  //:id
 
   module.exports = router;

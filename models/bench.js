@@ -7,10 +7,12 @@ const benchSchema = new Schema({
     creationDate: { type: Date, default: Date.now  }, // Default value
     modifDate: { type: Date, default: Date.now  }, // Default value
     score  :{ type : Number, default : 0}, // Default score value
-    meta: { // Nested document
-      backrest: Boolean,
-      material: String,
-      seats : Number,
+    backrest: Boolean,
+    material: ['Wood','Metal','Stone','Marble','Plastic'],
+    ergonomy : ['1','2','3','4','5'],
+    seats : Number,
+    image : String,
+    location : {
       longitude : Number,
       latitude : Number
     }
