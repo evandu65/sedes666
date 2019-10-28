@@ -71,6 +71,8 @@ const benchSchema = new Schema({
     latitude : Number,
     score : Number,
   }
+  },
+  photo : String,
 });
 const voteSchema = new Schema({
   type: Boolean,
