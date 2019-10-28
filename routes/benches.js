@@ -24,12 +24,12 @@ router.post('/', function(req, res, next) {
       res.send(savedBench);
     });
   });
-  router.deleteModel('/:id', function(req, res, next) {
+  /*router.deleteModel('/:id', function(req, res, next) {
       if (err) {
         return next(err);
       }
       // Send the saved document in the response
       res.send(savedBench);
   });
-  //:id
+  */
   module.exports = router;
