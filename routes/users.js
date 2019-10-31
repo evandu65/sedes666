@@ -50,11 +50,10 @@ router.post('/login', function (req, res, next) {
       if (err) {
         return next(err);
       } else if (!valid) {
-        console.log("nul");
         return res.sendStatus(401);
       }
       // Login is valid...
-      res.send(`Welcome ${user.username}!`);
+      res.send(`Welcome back ${user.username}!`);
     });
   })
 });

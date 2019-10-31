@@ -13,6 +13,16 @@ const voteSchema = new Schema({
         validator: validateUserId,
         message: function(props) { return props.reason.message; }
       }
+    },
+    benchId: {
+      type: ObjectId,
+      required:true,
+      validate: {
+        // Validate that the benchId is a valid ObjectId
+        // and references an existing bench
+        validator: validateBenchId,
+        message: function(props) { return props.reason.message; }
+      }
     }
     // Ajouter validation
   });
@@ -36,6 +46,25 @@ const voteSchema = new Schema({
     })
   
   
+  };
+
+  function validateBenchId(value) {
+    return new Promise((resolve, reject) => {
+  
+      if (!ObjectId.isValid(value)) {
+        throw new Error(`validateBenchId is not a valid bench reference`);
+      }
+  
+      mongoose.model('Bench').findOne({ _id: ObjectId(value) }).exec()
+        .then((bench) => {
+          if (!bench) {
+            throw new Error(`validateBenchId does not reference a bench that exists`);
+          } else {
+            resolve(true);
+          }
+        })
+        .catch(e => { reject(e) });
+    }) 
   }
 
    module.exports = mongoose.model('Vote', voteSchema);
