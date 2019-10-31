@@ -27,8 +27,9 @@ router.post('/', function(req, res, next) {
   router.delete('/:id', function(req, res, next) {
       const id = req.params.id;
       Bench.deleteOne({ _id: id}, function (err) {
-        if (err) return next(err);
-        // deleted at most one tank document
+        if (err){ 
+          return next(err);
+        }
       })
       res,send(`Bench id ${id} deleted`)
   });
