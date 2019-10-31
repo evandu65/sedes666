@@ -31,8 +31,8 @@ router.post('/', function (req, res, next) {
         return next(err);
       }
       // Send the saved document in the response
-      console.log(savedUser)
-      res.send(savedUser);
+      console.log(`Welcome ${savedUser.username}`);
+      res.send(`Welcome ${savedUser.username}`);
     });
   });
 });
