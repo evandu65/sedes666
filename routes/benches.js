@@ -24,10 +24,10 @@ router.post('/', function(req, res, next) {
       res.send(savedBench);
     });
   });
-  router.delete('/:id', function(req, res,next) {
+  router.delete('/:id', function(req, res, next) {
       const id = req.params.id;
       Bench.deleteOne({ _id: id}, function (err) {
-        if (err) return necct(err);
+        if (err) return next(err);
         // deleted at most one tank document
       })
   });
