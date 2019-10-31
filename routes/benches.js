@@ -24,12 +24,12 @@ router.post('/', function(req, res, next) {
       res.send(savedBench);
     });
   });
-  router.delete('/:id', function(req, res) {
-    const id = req.params.id;
-      if (err) {
-        return next(err);
-      }
-      Bench.deleteOne({ _id: new mongo.ObjectId(id)});
+  router.delete('/:id', function(req, res,next) {
+      const id = req.params.id;
+      Bench.deleteOne({ _id: id}, function (err) {
+        if (err) return necct(err);
+        // deleted at most one tank document
+      })
   });
   
   module.exports = router;
