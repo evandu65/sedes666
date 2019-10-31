@@ -31,7 +31,7 @@ router.post('/', function(req, res, next) {
           return next(err);
         }
       })
-      res,send(`Bench id ${id} deleted`)
+      res.send(`Bench id ${id} deleted`)
   });
   
   module.exports = router;
