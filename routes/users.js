@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const secretKey = process.env.SECRET_KEY || 'changeme';
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
@@ -53,10 +55,18 @@ router.post('/login', function (req, res, next) {
         console.log("nul");
         return res.sendStatus(401);
       }
-      // Login is valid...
-      res.send(`Welcome ${user.username}!`);
+       // Generate a valid JWT which expires in 7 days.
+       const exp = (new Date().getTime() + 7 * 24 * 3600 * 1000) / 1000;
+       const claims = { sub: user._id.toString(), exp: exp };
+       jwt.sign(claims, secretKey, function(err, token) {
+         if (err) { return next(err); }
+         res.send({ token: token }); // Send the token to the client.
+
+          // Login is valid...
+      //res.send(`Welcome ${user.username}!`);
     });
-  })
+  });
+});
 });
 
 module.exports = router;
