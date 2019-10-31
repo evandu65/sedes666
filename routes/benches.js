@@ -30,6 +30,7 @@ router.post('/', function(req, res, next) {
         if (err) return next(err);
         // deleted at most one tank document
       })
+      res,send(`Bench id ${id} deleted`)
   });
   
   module.exports = router;
