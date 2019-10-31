@@ -24,14 +24,12 @@ router.post('/', function(req, res, next) {
       res.send(savedBench);
     });
   });
-/*  router.deleteModel('/:id', function(req, res, next) {
+  router.delete('/:id', function(req, res) {
     const id = req.params.id;
-    Bench.deleteOne(ObjectId(id));
       if (err) {
         return next(err);
       }
-      // Send the saved document in the response
-      res.send(savedBench);
+      Bench.deleteOne({ _id: new mongo.ObjectId(id)});
   });
-  */
+  
   module.exports = router;
