@@ -1,6 +1,9 @@
 var express = require('express');
 var router = express.Router();
 const Vote = require('../models/vote');
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
+
 
 /* GET votes listing. */
 router.get('/', function (req, res, next) {
@@ -32,7 +35,20 @@ router.post('/', function(req, res, next) {
       }
     });
   }
-  
+
+  if (req.body.benchId && !ObjectId.isValid(req.body.benchId)) {
+    return res.status(422).send({
+      message: `Vote validation failed: benchId: must be a valid bench reference`,
+      errors: {
+        benchId: {
+          message: 'must be a valid bench reference',
+          path: 'benchId',
+          value: req.body.benchId
+        }
+      }
+    });
+  }
+
   // Save that document
   newVote.save(function(err, savedVote) {
     if (err) {
