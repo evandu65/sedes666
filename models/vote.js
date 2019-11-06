@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-var ObjectId = mongoose.Schema.Types.ObjectId;
+const ObjectId = mongoose.Types.ObjectId;
 const voteSchema = new Schema({
     type: Boolean,
     voteDate: { type: Date, default: Date.now  }, // Default value
     userId: {
-      type: ObjectId,
+      type: Schema.Types.ObjectId,
       required:true,
       validate: {
         // Validate that the userId is a valid ObjectId
@@ -15,7 +15,7 @@ const voteSchema = new Schema({
       }
     },
     benchId: {
-      type: ObjectId,
+      type: Schema.Types.ObjectId,
       required:true,
       validate: {
         // Validate that the benchId is a valid ObjectId
@@ -28,6 +28,7 @@ const voteSchema = new Schema({
   });
 
   function validateUserId(value) {
+    console.log('Validating user ID');
     return new Promise((resolve, reject) => {
   
       if (!ObjectId.isValid(value)) {
@@ -35,8 +36,8 @@ const voteSchema = new Schema({
       }
   
       mongoose.model('User').findOne({ _id: ObjectId(value) }).exec()
-        .then((person) => {
-          if (!person) {
+        .then((user) => {
+          if (!user) {
             throw new Error(`validateUserId does not reference a user that exists`);
           } else {
             resolve(true);
