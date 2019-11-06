@@ -24,14 +24,15 @@ router.post('/', function(req, res, next) {
       res.send(savedBench);
     });
   });
+/* DELETE a bench */
   router.delete('/:id', function(req, res, next) {
       const id = req.params.id;
       Bench.deleteOne({ _id: id}, function (err, deleteBench) {
         if (err){ 
           return next(err);
         }
-      res.send(deleteBench)
+      res.send(`bench ${id} has been deleted ;)`)
     });
   });
-  
+/* */
   module.exports = router;
