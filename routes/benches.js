@@ -45,7 +45,7 @@ router.post('/', function(req, res, next) {
 
   /* PATCH a bench */
   router.patch('/:id', loadBenchFromParamsMiddleware, function (req, res, next) {
-
+    console.log('body', req.body);
     // Update only properties present in the request body
     if (req.body.score !== undefined) {
       req.bench.score = req.body.score;
@@ -56,7 +56,7 @@ router.post('/', function(req, res, next) {
     if (req.body.ergonomy !== undefined) {
       req.bench.ergonomy = req.body.ergonomy;
     }
-    //req.bench.modifDate = Date.now;
+    //req.bench.modifDate = Date.now();
   
     req.bench.save(function (err, savedBench) {
       if (err) {
