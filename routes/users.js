@@ -3,6 +3,7 @@ var router = express.Router();
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const ObjectId = mongoose.Types.ObjectId;
 const secretKey = process.env.SECRET_KEY || 'changeme';
 
 /* GET users listing. */
