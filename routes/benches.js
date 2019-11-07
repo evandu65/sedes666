@@ -50,10 +50,16 @@ router.post('/', function(req, res, next) {
     if (req.body.id !== undefined) {
       req.bench.id = req.body.id;
     }
-  
-    if (req.bench.score !== undefined) {
+    if (req.body.score !== undefined) {
       req.bench.score = req.body.score;
     }
+    if (req.body.material !== undefined) {
+      req.bench.material = req.body.material;
+    }
+    if (req.body.ergonomy !== undefined) {
+      req.bench.ergonomy = req.body.ergonomy;
+    }
+    req.bench.modifDate = Date.now;
   
     req.bench.save(function (err, savedBench) {
       if (err) {
