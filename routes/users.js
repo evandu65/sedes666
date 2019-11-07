@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const User = require('../models/user');
+const Vote = require('../models/vote');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const secretKey = process.env.SECRET_KEY || 'changeme';
@@ -21,6 +22,15 @@ router.get('/', function (req, res, next) {
 router.get('/:id',loadUserFromParamsMiddleware, function (req, res, next) {
   res.send(req.user);
 });
+router.get('/:id/votes', loadUserFromParamsMiddleware, function(req,res,next){
+  Vote.find({userId : req.user.id}).sort('-voteDate').exec(function (err, votes) {
+    if (err) {
+      return next(err);
+    }
+    res.send(votes);
+  });
+})  
+
 /* POST new user */
 router.post('/', function (req, res, next) {
   //encrypt the password
