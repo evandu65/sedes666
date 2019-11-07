@@ -59,7 +59,7 @@ router.post('/', function(req, res, next) {
     if (req.body.ergonomy !== undefined) {
       req.bench.ergonomy = req.body.ergonomy;
     }
-    req.bench.modifDate = Date.now;
+    //req.bench.modifDate = Date.now;
   
     req.bench.save(function (err, savedBench) {
       if (err) {
