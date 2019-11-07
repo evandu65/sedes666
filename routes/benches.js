@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const Bench = require('../models/bench');
+const Vote = require('../models/vote');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const debug = require('debug')('demo:benches');
@@ -50,7 +51,14 @@ router.get('/', function (req, res, next) {
 router.get('/:id',loadBenchFromParamsMiddleware, function (req, res, next) {
     res.send(req.bench);
   });
-
+router.get('/:id/votes', loadBenchFromParamsMiddleware, function(req,res,next){
+  Vote.find({benchId : req.body.id}).sort('voteDate').exec(function (err, votes) {
+    if (err) {
+      return next(err);
+    }
+    res.send(votes);
+  });
+})  
 /* POST new bench */
 router.post('/', function(req, res, next) {
     // Create a new document from the JSON in the request body
@@ -79,7 +87,6 @@ router.post('/', function(req, res, next) {
 
   /* PATCH a bench */
   router.patch('/:id', loadBenchFromParamsMiddleware, function (req, res, next) {
-    console.log('body', req.body);
     // Update only properties present in the request body
     if (req.body.score !== undefined) {
       req.bench.score = req.body.score;
@@ -90,7 +97,7 @@ router.post('/', function(req, res, next) {
     if (req.body.ergonomy !== undefined) {
       req.bench.ergonomy = req.body.ergonomy;
     }
-    //req.bench.modifDate = Date.now();
+    req.bench.modifDate = Date.now();
   
     req.bench.save(function (err, savedBench) {
       if (err) {
@@ -102,6 +109,7 @@ router.post('/', function(req, res, next) {
     });
   });
 
+  /* Middle ware verification */
   function loadBenchFromParamsMiddleware(req, res, next) {
 
     const benchId = req.params.id;
