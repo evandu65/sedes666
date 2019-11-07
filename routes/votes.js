@@ -59,14 +59,6 @@ router.post('/', function(req, res, next) {
   });
 });
 
-/* GET all votes */
-  router.get('/', function (req, res, next) {
-    Vote.find().exec(function (err, votes) {
-      if (err) {
-        return next(err);
-      }
-      res.send(votes);
-    });
-  });
+
 
   module.exports = router;

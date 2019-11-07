@@ -17,12 +17,14 @@ router.get('/', function (req, res, next) {
 
 /* POST new user */
 router.post('/', function (req, res, next) {
-
   //encrypt the password
 
   const plainPassword = req.body.password;
   const saltRounds = 10;
   bcrypt.hash(plainPassword, saltRounds, function (err, hashedPassword) {
+    if (err) {
+      return next(err);
+    }
 
     // Create a new document from the JSON in the request body
     const newUser = new User(req.body);
@@ -34,7 +36,7 @@ router.post('/', function (req, res, next) {
       }
       // Send the saved document in the response
       console.log(`Welcome ${savedUser.username}`);
-      res.send(`Welcome ${savedUser.username}`);
+      res.send(savedUser);
     });
   });
 });
