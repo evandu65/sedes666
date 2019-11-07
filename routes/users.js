@@ -72,6 +72,38 @@ router.post('/login', function (req, res, next) {
   });
 });
 });
+/************************/
+/* DELETE a user */
+router.delete('/:id', function(req, res, next) {
+  const id = req.params.id;
+  User.deleteOne({ _id: id}, function (err, deleteUser) {
+    if (err){ 
+      return next(err);
+    }
+  res.send(`User ${id} has been deleted ;)`)
+});
+});
+/************************/
+/* PATCH a user */
+router.patch('/:id', loadUserFromParamsMiddleware, function (req, res, next) {
+  // Update only properties present in the request body
+  const plainPassword = req.body.password;
+  const saltRounds = 10;
+  bcrypt.hash(plainPassword, saltRounds, function (err, hashedPassword) {
+    if (err) {
+      return next(err);
+    }
+    req.user.password = hashedPassword;
+  req.user.save(function (err, savedUser) {
+    if (err) {
+      return next(err);
+    }
+
+    debug(`Updated user "${userVote.id}"`);
+    res.send(userVote);
+  });
+});
+
 ///////// 
 function loadUserFromParamsMiddleware(req, res, next) {
 
