@@ -51,7 +51,7 @@ router.post('/', function(req, res, next) {
       req.bench.id = req.body.id;
     }
     if (req.body.score !== undefined) {
-      req.bench.score = req.body.score;
+      req.Bench.score = req.body.score;
     }
     if (req.body.material !== undefined) {
       req.bench.material = req.body.material;
