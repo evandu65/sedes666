@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const Bench = require('../models/bench');
+const Vote = require('../models/vote');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const debug = require('debug')('demo:benches');
