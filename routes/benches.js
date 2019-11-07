@@ -5,7 +5,7 @@ const Vote = require('../models/vote');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const debug = require('debug')('demo:benches');
-
+/************************/
 /* GET benches listing. */
 router.get('/', function (req, res, next) {
   // Parse the "page" param (default to 1 if invalid)
@@ -52,13 +52,14 @@ router.get('/:id',loadBenchFromParamsMiddleware, function (req, res, next) {
     res.send(req.bench);
   });
 router.get('/:id/votes', loadBenchFromParamsMiddleware, function(req,res,next){
-  Vote.find({benchId : req.bench.id}).sort('voteDate').exec(function (err, votes) {
+  Vote.find({benchId : req.bench.id}).sort('-voteDate').exec(function (err, votes) {
     if (err) {
       return next(err);
     }
     res.send(votes);
   });
 })  
+/************************/
 /* POST new bench */
 router.post('/', function(req, res, next) {
     // Create a new document from the JSON in the request body
@@ -72,6 +73,7 @@ router.post('/', function(req, res, next) {
       res.send(savedBench);
     });
   });
+/************************/
 /* DELETE a bench */
   router.delete('/:id', function(req, res, next) {
       const id = req.params.id;
@@ -84,7 +86,7 @@ router.post('/', function(req, res, next) {
   });
 /* */
   
-
+/************************/
   /* PATCH a bench */
   router.patch('/:id', loadBenchFromParamsMiddleware, function (req, res, next) {
     // Update only properties present in the request body
@@ -108,7 +110,7 @@ router.post('/', function(req, res, next) {
       res.send(savedBench);
     });
   });
-
+    /************************/
   /* Middle ware verification */
   function loadBenchFromParamsMiddleware(req, res, next) {
 

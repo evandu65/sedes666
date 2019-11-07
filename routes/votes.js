@@ -4,7 +4,7 @@ const Vote = require('../models/vote');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 
-
+/************************/
 /* GET votes listing. */
 router.get('/', function (req, res, next) {
   Vote.find().sort('creationDate').exec(function (err, votes) {
@@ -14,7 +14,9 @@ router.get('/', function (req, res, next) {
     res.send(votes);
   });
 });
-
+router.get('/:id', function (req, res, next) {
+  res.send(req.vote);
+});
 /* POST new vote */
 router.post('/', function(req, res, next) {
   // Create a new document from the JSON in the request body
