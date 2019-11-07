@@ -62,5 +62,28 @@ router.post('/', function(req, res, next) {
 });
 
 
+function loadVoteFromParamsMiddleware(req, res, next) {
+
+  const voteId = req.params.id;
+  if (!ObjectId.isValid(voteId)) {
+    return voteNotFound(res, voteId);
+  }
+
+  let query = Vote.findById(voteId)
+
+  query.exec(function (err, vote) {
+    if (err) {
+      return next(err);
+    } else if (!vote) {
+      return benchNotFound(res, voteId);
+    }
+
+    req.vote = vote;
+    next();
+  });
+}
+function benchNotFound(res, voteId) {
+  return res.status(404).type('text').send(`No vote found with ID ${voteId}`);
+}
 
   module.exports = router;
