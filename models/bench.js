@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const integerValidator = require('mongoose-integer');
 
-
 const benchSchema = new Schema({
     description: String,
     creationDate: { type: Date, default: Date.now  }, // Default value
