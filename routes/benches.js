@@ -3,6 +3,7 @@ var router = express.Router();
 const Bench = require('../models/bench');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
+const debug = require('debug')('demo:benches');
 
 /* GET benches listing. */
 router.get('/', function (req, res, next) {
@@ -43,7 +44,7 @@ router.post('/', function(req, res, next) {
   
 
   /* PATCH a bench */
-  router.patch('/:id', loadMovieFromParamsMiddleware, function (req, res, next) {
+  router.patch('/:id', loadBenchFromParamsMiddleware, function (req, res, next) {
 
     // Update only properties present in the request body
     if (req.body.id !== undefined) {
@@ -64,7 +65,7 @@ router.post('/', function(req, res, next) {
     });
   });
 
-  function loadMovieFromParamsMiddleware(req, res, next) {
+  function loadBenchFromParamsMiddleware(req, res, next) {
 
     const benchId = req.params.id;
     if (!ObjectId.isValid(benchId)) {
