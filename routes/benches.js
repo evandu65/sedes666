@@ -47,11 +47,8 @@ router.post('/', function(req, res, next) {
   router.patch('/:id', loadBenchFromParamsMiddleware, function (req, res, next) {
 
     // Update only properties present in the request body
-    if (req.body.id !== undefined) {
-      req.bench.id = req.body.id;
-    }
     if (req.body.score !== undefined) {
-      req.Bench.score = req.body.score;
+      req.bench.score = req.body.score;
     }
     if (req.body.material !== undefined) {
       req.bench.material = req.body.material;
