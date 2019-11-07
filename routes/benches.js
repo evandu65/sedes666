@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const Bench = require('../models/bench');
+const ObjectId = mongoose.Types.ObjectId;
 
 /* GET benches listing. */
 router.get('/', function (req, res, next) {
