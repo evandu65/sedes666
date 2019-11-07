@@ -11,6 +11,14 @@ router.get('/', function (req, res, next) {
     res.send(benches);
   });
 });
+router.get('/:id', function (req, res, next) {
+  Bench.find({_id:id}).exec(function (err, benches) {
+    if (err) {
+      return next(err);
+    }
+    res.send(benches);
+  });
+});
 /* POST new bench */
 router.post('/', function(req, res, next) {
     // Create a new document from the JSON in the request body
