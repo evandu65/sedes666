@@ -26,11 +26,12 @@ router.get('/', function (req, res, next) {
 
     let query = Bench.find();
 
-      // Filter movies by director
-  if (ObjectId.isValid(req.query.director)) {
-    query = query.where('director').equals(req.query.director);
-  }
-    
+    // Limit benches to only those with a good enough rating
+    if (!isNaN(req.query.ratedAtLeast)) {
+      query = query.where('score').gte(req.query.ratedAtLeast);
+      query = query.where('rating').gte(req.query.ratedAtLeast);
+    }
+
     // Apply skip and limit to select the correct page of elements
       query = query.skip((page - 1) * pageSize).limit(pageSize);
   
