@@ -14,6 +14,7 @@ router.get('/', function (req, res, next) {
     res.send(votes);
   });
 });
+
 /* POST new vote */
 router.post('/', function(req, res, next) {
   // Create a new document from the JSON in the request body
