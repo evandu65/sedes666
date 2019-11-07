@@ -13,8 +13,8 @@ const benchSchema = new Schema({
     seats : Number,
     image : String,
     location : {
-      longitude : Number,
-      latitude : Number
+      type: Point,
+      coordinates: [ -73.856077, 40.848447 ]
     }
   });
 
