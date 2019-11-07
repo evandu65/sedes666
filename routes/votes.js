@@ -74,23 +74,10 @@ router.delete('/:id', function(req, res, next) {
 });
 });
 /************************/
-/* DELETE a bench */
-router.delete('/:id', function(req, res, next) {
-  const id = req.params.id;
-  Vote.deleteOne({ _id: id}, function (err, deleteVote) {
-    if (err){ 
-      return next(err);
-    }
-  res.send(`vote ${id} has been deleted ;)`)
-});
-});
-/* */
-
-/************************/
 /* PATCH a vote */
 router.patch('/:id', loadVoteFromParamsMiddleware, function (req, res, next) {
   // Update only properties present in the request body
-  if (req.body.type !== undefined) {
+  if (req.body.type != undefined) {
     req.vote.type = req.vote.type;
   }
   req.vote.voteDate = Date.now();
