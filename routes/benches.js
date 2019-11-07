@@ -19,7 +19,7 @@ router.get('/:id',loadBenchFromParamsMiddleware, function (req, res, next) {
     res.send(req.bench);
   });
 router.get('/:id/votes', loadBenchFromParamsMiddleware, function(req,res,next){
-  Vote.find({benchId : req.body.id}).sort('voteDate').exec(function (err, votes) {
+  Vote.find({benchId : req.bench.id}).sort('voteDate').exec(function (err, votes) {
     if (err) {
       return next(err);
     }
