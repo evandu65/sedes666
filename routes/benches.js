@@ -59,7 +59,7 @@ router.post('/', function(req, res, next) {
         return next(err);
       }
   
-      debug(`Updated bench "${savedBench.title}"`);
+      debug(`Updated bench "${savedBench.id}"`);
       res.send(savedBench);
     });
   });
