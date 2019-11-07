@@ -19,7 +19,7 @@ router.get('/', function (req, res, next) {
   });
 });
 router.get('/:id',loadUserFromParamsMiddleware, function (req, res, next) {
-  res.send(req.vote);
+  res.send(req.user);
 });
 /* POST new user */
 router.post('/', function (req, res, next) {
@@ -101,8 +101,8 @@ router.patch('/:id', loadUserFromParamsMiddleware, function (req, res, next) {
       return next(err);
     }
 
-    debug(`Updated user "${userVote.id}"`);
-    res.send(userVote);
+    debug(`Updated user "${savedUser.id}"`);
+    res.send(savedUser);
   });
 });
 });
