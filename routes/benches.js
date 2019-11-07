@@ -40,7 +40,7 @@ router.post('/', function(req, res, next) {
     });
   });
 /* */
-  module.exports = router;
+  
 
   /* PATCH a bench */
   router.patch('/:id', loadMovieFromParamsMiddleware, function (req, res, next) {
@@ -87,3 +87,5 @@ router.post('/', function(req, res, next) {
   function benchNotFound(res, benchId) {
     return res.status(404).type('text').send(`No bench found with ID ${benchId}`);
   }
+
+  module.exports = router;
