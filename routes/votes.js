@@ -18,6 +18,7 @@ router.get('/', function (req, res, next) {
 router.get('/:id',loadVoteFromParamsMiddleware, function (req, res, next) {
   res.send(req.vote);
 });
+/************************/
 /* POST new vote */
 router.post('/', function(req, res, next) {
   // Create a new document from the JSON in the request body
@@ -61,6 +62,48 @@ router.post('/', function(req, res, next) {
     res.send(savedVote);
   });
 });
+/************************/
+/* DELETE a vote */
+router.delete('/:id', function(req, res, next) {
+  const id = req.params.id;
+  Vote.deleteOne({ _id: id}, function (err, deleteVote) {
+    if (err){ 
+      return next(err);
+    }
+  res.send(`Vote ${id} has been deleted ;)`)
+});
+});
+/************************/
+/* DELETE a bench */
+router.delete('/:id', function(req, res, next) {
+  const id = req.params.id;
+  Vote.deleteOne({ _id: id}, function (err, deleteVote) {
+    if (err){ 
+      return next(err);
+    }
+  res.send(`vote ${id} has been deleted ;)`)
+});
+});
+/* */
+
+/************************/
+/* PATCH a vote */
+router.patch('/:id', loadVoteFromParamsMiddleware, function (req, res, next) {
+  // Update only properties present in the request body
+  if (req.body.type !== undefined) {
+    req.vote.type = req.vote.type;
+  }
+  req.vote.voteDate = Date.now();
+  req.vote.save(function (err, savedVote) {
+    if (err) {
+      return next(err);
+    }
+
+    debug(`Updated vote "${savedVote.id}"`);
+    res.send(savedVote);
+  });
+});
+
 
 
 function loadVoteFromParamsMiddleware(req, res, next) {
@@ -76,14 +119,14 @@ function loadVoteFromParamsMiddleware(req, res, next) {
     if (err) {
       return next(err);
     } else if (!vote) {
-      return benchNotFound(res, voteId);
+      return voteNotFound(res, voteId);
     }
 
     req.vote = vote;
     next();
   });
 }
-function benchNotFound(res, voteId) {
+function voteNotFound(res, voteId) {
   return res.status(404).type('text').send(`No vote found with ID ${voteId}`);
 }
 

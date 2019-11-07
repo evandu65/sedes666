@@ -24,7 +24,6 @@ const voteSchema = new Schema({
         message: function(props) { return props.reason.message; }
       }
     }
-    // Ajouter validation
   });
 
   function validateUserId(value) {
