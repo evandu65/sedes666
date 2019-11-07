@@ -14,7 +14,9 @@ router.get('/', function (req, res, next) {
     res.send(users);
   });
 });
-
+router.get('/:id',loadVoteFromParamsMiddleware, function (req, res, next) {
+  res.send(req.vote);
+});
 /* POST new user */
 router.post('/', function (req, res, next) {
   //encrypt the password
@@ -69,5 +71,29 @@ router.post('/login', function (req, res, next) {
   });
 });
 });
+///////// 
+function loadUserFromParamsMiddleware(req, res, next) {
+
+  const userId = req.params.id;
+  if (!ObjectId.isValid(userId)) {
+    return userNotFound(res, userId);
+  }
+
+  let query = User.findById(userId)
+
+  query.exec(function (err, user) {
+    if (err) {
+      return next(err);
+    } else if (!user) {
+      return userNotFound(res, userId);
+    }
+
+    req.user = user;
+    next();
+  });
+}
+function userNotFound(res, userId) {
+  return res.status(404).type('text').send(`No user found with ID ${userId}`);
+}
 
 module.exports = router;
