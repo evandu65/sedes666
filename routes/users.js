@@ -3,8 +3,10 @@ var router = express.Router();
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const ObjectId = mongoose.Types.ObjectId;
 const secretKey = process.env.SECRET_KEY || 'changeme';
+const ObjectId = mongoose.Types.ObjectId;
+const debug = require('debug')('demo:users');
+
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
@@ -86,7 +88,6 @@ router.delete('/:id', function(req, res, next) {
 /************************/
 /* PATCH a user */
 router.patch('/:id', loadUserFromParamsMiddleware, function (req, res, next) {
-  // Update only properties present in the request body
   const plainPassword = req.body.password;
   const saltRounds = 10;
   bcrypt.hash(plainPassword, saltRounds, function (err, hashedPassword) {
@@ -102,6 +103,7 @@ router.patch('/:id', loadUserFromParamsMiddleware, function (req, res, next) {
     debug(`Updated user "${userVote.id}"`);
     res.send(userVote);
   });
+});
 });
 
 ///////// 
