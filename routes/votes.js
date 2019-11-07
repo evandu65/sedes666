@@ -3,6 +3,7 @@ var router = express.Router();
 const Vote = require('../models/vote');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
+const debug = require('debug')('demo:votes');
 
 /************************/
 /* GET votes listing. */
@@ -14,7 +15,7 @@ router.get('/', function (req, res, next) {
     res.send(votes);
   });
 });
-router.get('/:id', function (req, res, next) {
+router.get('/:id',loadVoteFromParamsMiddleware, function (req, res, next) {
   res.send(req.vote);
 });
 /* POST new vote */
