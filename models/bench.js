@@ -13,11 +13,26 @@ const benchSchema = new Schema({
     ergonomy : { type : Number, min: 0, max:5, integer: true},
     seats : Number,
     image : String,
-    location : {
-      longitude : Number,
-      latitude : Number
+    location: {
+      type: {
+        type: String,
+        required: true,
+        enum: [ 'Point' ]
+      },
+      coordinates: {
+        type: [ Number ],
+        required: true,
+        validate: {
+          validator: validateGeoJsonCoordinates,
+          message: '{VALUE} is not a valid longitude/latitude(/altitude) coordinates array'
+        }
+      }
     }
   });
+
+  function validateGeoJsonCoordinates(value) {
+    return Array.isArray(value) && value.length >= 2 && value.length <= 3 && value[0] >= -180 && value[0] <= 180 && value[1] >= -90 && value[1] <= 90;
+  }
 
 
   module.exports = mongoose.model('Bench', benchSchema);
