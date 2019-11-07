@@ -12,7 +12,7 @@ router.get('/', function (req, res, next) {
     res.send(benches);
   });
 });
-router.get('/:id', function (req, res, next) {
+router.get('/:id',loadMovieFromParamsMiddleware, function (req, res, next) {
     res.send(req.bench);
   });
 /* POST new bench */
