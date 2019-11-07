@@ -22,8 +22,8 @@ describe('POST /benches', function () {
         seats : 5,
         image : "https://www.google.ch/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=2ahUKEwjyu__M6dflAhUOGewKHTHsA_MQjRx6BAgBEAQ&url=https%3A%2F%2Fwww.amazon.com%2FGDF-Studio-300496-Colonial-Sandblack%2Fdp%2FB0725D1VDL&psig=AOvVaw1cKGLGRnPFxIP4DukSsr37&ust=1573206645976252",
         location : {
-          longitude : 46.7833,
-          latitude : 6.65
+          type : "Point",
+          coordinates : [ -73.856077, 40.848447 ]
         }
       })
       .expect(200)
@@ -36,7 +36,9 @@ describe('POST /benches', function () {
     expect(res.body.ergonomy).to.be.a('number');
     expect(res.body.material).to.equal('Metal');
     expect(res.body.seats).to.be.a('number');
-    expect(res.body.material).to.equal('Metal');
+    expect(res.body.image).to.be.a('string');
+    expect(res.body.location.type).to.equal('Point');
+    expect(res.body.location.coordinates).to.be.a('array');
     expect(res.body).to.have.all.keys('_id', 'description', 'backrest', '__v', 'creationDate', 'ergonomy', 'image', 'location', 'material', 'modifDate','score', 'seats');
   });
 });
