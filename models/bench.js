@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const integerValidator = require('mongoose-integer');
 
 
 const benchSchema = new Schema({
@@ -8,8 +9,8 @@ const benchSchema = new Schema({
     modifDate: { type: Date, default: Date.now  }, // Default value
     score  :{ type : Number, default : 0}, // Default score value
     backrest: Boolean,
-    material: ['Wood','Metal','Stone','Marble','Plastic'],
-    ergonomy : ['1','2','3','4','5'],
+    material: { type : String, enumm : ['Wood','Metal','Stone','Marble','Plastic']},
+    ergonomy : { type : Number, min: 0, max:5, integer: true},
     seats : Number,
     image : String,
     location : {
