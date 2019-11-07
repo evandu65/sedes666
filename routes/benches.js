@@ -5,7 +5,7 @@ const Vote = require('../models/vote');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const debug = require('debug')('demo:benches');
-
+/************************/
 /* GET benches listing. */
 router.get('/', function (req, res, next) {
   // Parse the "page" param (default to 1 if invalid)
@@ -26,11 +26,12 @@ router.get('/', function (req, res, next) {
 
     let query = Bench.find();
 
-      // Filter movies by director
-  if (ObjectId.isValid(req.query.director)) {
-    query = query.where('director').equals(req.query.director);
-  }
-    
+    // Limit benches to only those with a good enough rating
+    if (!isNaN(req.query.ratedAtLeast)) {
+      query = query.where('score').gte(req.query.ratedAtLeast);
+      query = query.where('rating').gte(req.query.ratedAtLeast);
+    }
+
     // Apply skip and limit to select the correct page of elements
       query = query.skip((page - 1) * pageSize).limit(pageSize);
   
@@ -52,13 +53,14 @@ router.get('/:id',loadBenchFromParamsMiddleware, function (req, res, next) {
     res.send(req.bench);
   });
 router.get('/:id/votes', loadBenchFromParamsMiddleware, function(req,res,next){
-  Vote.find({benchId : req.body.id}).sort('voteDate').exec(function (err, votes) {
+  Vote.find({benchId : req.bench.id}).sort('-voteDate').exec(function (err, votes) {
     if (err) {
       return next(err);
     }
     res.send(votes);
   });
 })  
+/************************/
 /* POST new bench */
 router.post('/', function(req, res, next) {
     // Create a new document from the JSON in the request body
@@ -72,6 +74,7 @@ router.post('/', function(req, res, next) {
       res.send(savedBench);
     });
   });
+/************************/
 /* DELETE a bench */
   router.delete('/:id', function(req, res, next) {
       const id = req.params.id;
@@ -84,7 +87,7 @@ router.post('/', function(req, res, next) {
   });
 /* */
   
-
+/************************/
   /* PATCH a bench */
   router.patch('/:id', loadBenchFromParamsMiddleware, function (req, res, next) {
     // Update only properties present in the request body
@@ -108,7 +111,7 @@ router.post('/', function(req, res, next) {
       res.send(savedBench);
     });
   });
-
+    /************************/
   /* Middle ware verification */
   function loadBenchFromParamsMiddleware(req, res, next) {
 
