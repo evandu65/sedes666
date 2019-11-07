@@ -36,3 +36,49 @@ router.post('/', function(req, res, next) {
   });
 /* */
   module.exports = router;
+
+  /* PATCH a bench */
+  router.patch('/:id', loadMovieFromParamsMiddleware, function (req, res, next) {
+
+    // Update only properties present in the request body
+    if (req.body.id !== undefined) {
+      req.bench.id = req.body.id;
+    }
+  
+    if (req.bench.score !== undefined) {
+      req.bench.score = req.body.score;
+    }
+  
+    req.bench.save(function (err, savedBench) {
+      if (err) {
+        return next(err);
+      }
+  
+      debug(`Updated bench "${savedBench.title}"`);
+      res.send(savedBench);
+    });
+  });
+
+  function loadMovieFromParamsMiddleware(req, res, next) {
+
+    const benchId = req.params.id;
+    if (!ObjectId.isValid(benchId)) {
+      return benchNotFound(res, benchId);
+    }
+  
+    let query = Bench.findById(benchId)
+  
+    query.exec(function (err, bench) {
+      if (err) {
+        return next(err);
+      } else if (!bench) {
+        return benchNotFound(res, benchId);
+      }
+  
+      req.bench = bench;
+      next();
+    });
+  }
+  function benchNotFound(res, benchId) {
+    return res.status(404).type('text').send(`No bench found with ID ${benchId}`);
+  }
