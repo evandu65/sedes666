@@ -78,6 +78,8 @@ router.delete('/:id', function(req, res, next) {
 router.patch('/:id', loadVoteFromParamsMiddleware, function (req, res, next) {
   // Update only properties present in the request body
   req.vote.type = req.vote.type;
+  console.log(req.body);
+  console.log("-");
   req.vote.voteDate = Date.now();
   req.vote.save(function (err, savedVote) {
     if (err) {
