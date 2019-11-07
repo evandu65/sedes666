@@ -14,7 +14,7 @@ router.get('/', function (req, res, next) {
     res.send(benches);
   });
 });
-router.get('/:id',loadMovieFromParamsMiddleware, function (req, res, next) {
+router.get('/:id',loadBenchFromParamsMiddleware, function (req, res, next) {
     res.send(req.bench);
   });
 /* POST new bench */
@@ -65,7 +65,7 @@ router.post('/', function(req, res, next) {
     });
   });
 
-  function loadMovieFromParamsMiddleware(req, res, next) {
+  function loadBenchFromParamsMiddleware(req, res, next) {
 
     const benchId = req.params.id;
     if (!ObjectId.isValid(benchId)) {
