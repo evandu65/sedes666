@@ -54,7 +54,6 @@ router.post('/login', function (req, res, next) {
       if (err) {
         return next(err);
       } else if (!valid) {
-        console.log("nul");
         return res.sendStatus(401);
       }
        // Generate a valid JWT which expires in 7 days.
