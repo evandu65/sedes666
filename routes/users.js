@@ -14,7 +14,7 @@ router.get('/', function (req, res, next) {
     res.send(users);
   });
 });
-router.get('/:id',loadVoteFromParamsMiddleware, function (req, res, next) {
+router.get('/:id',loadUserFromParamsMiddleware, function (req, res, next) {
   res.send(req.vote);
 });
 /* POST new user */
