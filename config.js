@@ -6,6 +6,7 @@ try {
 
 exports.port = process.env.PORT || 3000;
 exports.secretKey = process.env.MY_APP_SECRET_KEY || 'changeme';
+exports.namespace = process.env.NAMESPACE || 'com.sedes';
 
 // Validate that port is a positive integer.
 if (process.env.PORT) {
