@@ -193,7 +193,7 @@ router.post('/', function(req, res, next) {
     return res.status(404).type('text').send(`No bench found with ID ${benchId}`);
   }
 
-  module.exports = router;
+
 
   /**
  * @apiDefine BenchInRequestBody
@@ -255,3 +255,4 @@ router.post('/', function(req, res, next) {
  *       }
  *     }
  */
+module.exports = router;

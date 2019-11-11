@@ -1,3 +1,4 @@
+module.exports = router;
 require.config({
     paths: {
         bootstrap: './vendor/bootstrap.min',
