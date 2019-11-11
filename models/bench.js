@@ -15,7 +15,8 @@ const benchSchema = new Schema({
     image : String,
     location: {
       type: {
-        type: {default : 'Point'},
+        type: String,
+        default : 'Point',
         required: true,
         enum: [ 'Point' ]
       },

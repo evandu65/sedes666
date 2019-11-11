@@ -200,12 +200,11 @@ router.post('/', function(req, res, next) {
  * @apiParam (Request body) {String{3..50}} description The description of the bench 
  * @apiParam (Request body) {Boolean} backrest The backrest parameters 0=no 1=yes
  * @apiParam (Request body) {String{0..50}} material The material of the bench (Wood,Metal,Stone,Marble,Plastic)
- * @apiParam (Request body) {Number} ergonomy The ergonomy mark of the bench (0 to 5)
- * @apiParam (Request body) {Number} seats The number of seats on the bench
+ * @apiParam (Request body) {Number{0..5}} ergonomy The ergonomy mark of the benc
+ * @apiParam (Request body) {Number{0..3000}} seats The number of seats on the bench
  * @apiParam (Request body) {String{0..50}} image The image of the bench
- * @apiParam (Request body) {Array} location Location array
- * @apiParam (Request body) {Array} location.coordinates Coordinates array
- * @apiParam (Request body) {Number} location.coordinates.type The longitude and latitude of the bench
+ * @apiParam (Request body) {Array} location.type Geometry type
+ * @apiParam (Request body) {Number{-180,180}} location.coordinates The longitude and latitude of the bench
  */
 
 /**
@@ -223,9 +222,8 @@ router.post('/', function(req, res, next) {
  * @apiSuccess (Response body) {String} registrationDate The registration date of the user
  * @apiSuccess (Response body) {Array} location Location array
  * @apiSuccess (Response body) {Array} location.type Location type array
- * @apiSuccess (Response body) {Array} location.type.type Location type
- * @apiSuccess (Response body) {Array} location.coordinates Coordinates array
- * @apiSuccess (Response body) {Number} location.coordinates.type The longitude and latitude of the bench
+ * @apiSuccess (Response body) {Array} location.type Geometry type
+ * @apiSuccess (Response body) {Number} location.coordinates The longitude and latitude of the bench
  */
 
 /**
