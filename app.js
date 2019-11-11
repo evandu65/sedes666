@@ -9,7 +9,6 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var benchesRouter = require('./routes/benches');
 var votesRouter = require('./routes/votes');
-var docsRouter = require('./docs/main');
 
 var app = express();
 
