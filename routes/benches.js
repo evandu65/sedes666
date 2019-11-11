@@ -199,7 +199,7 @@ router.post('/', function(req, res, next) {
  * @apiParam (Request body) {Number{0..3000}} seats The number of seats on the bench
  * @apiParam (Request body) {String{0..50}} image The image of the bench
  * @apiParam (Request body) {Array} location Location array
- * @apiParam (Request body) {Array} location.type Geometrical type 
+ * @apiParam (Request body) {String{0..50}} location.type Geometrical type 
  * @apiParam (Request body) {Number{-180..180}} location.coordinates The longitude and latitude of the bench
  */
 
@@ -218,8 +218,8 @@ router.post('/', function(req, res, next) {
  * @apiSuccess (Response body) {String} registrationDate The registration date of the user
  * @apiSuccess (Response body) {Array} location Location array
  * @apiSuccess (Response body) {Array} location.type Location type array
- * @apiSuccess (Response body) {Array} location.type.type Location type
- * @apiSuccess (Response body) {Array} location.type Geometrical type 
+ * @apiSuccess (Response body) {Array} location Location type
+ * @apiSuccess (Response body) {String} location.type Geometrical type 
  * @apiSuccess (Response body) {Number} location.coordinates The longitude and latitude of the bench
  */
 
