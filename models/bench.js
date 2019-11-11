@@ -14,6 +14,7 @@ const benchSchema = new Schema({
       message: function(props) { return props.reason.message; }
     }
   },
+
     description: String,
     creationDate: { type: Date, default: Date.now  }, // Default value
     modifDate: { type: Date, default: Date.now  }, // Default value
@@ -26,6 +27,7 @@ const benchSchema = new Schema({
     location: {
       type: {
         type: String,
+        default : 'Point',
         required: true,
         enum: [ 'Point' ]
       },

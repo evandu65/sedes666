@@ -24,13 +24,13 @@ if (process.env.NODE_ENV !== 'test') {
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'docs')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/votes', votesRouter);
 app.use('/benches', benchesRouter);
-
+//app.use('/',app.use(express.static(path.join(__dirname, 'docs'))));
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
