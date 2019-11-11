@@ -4,6 +4,7 @@ const integerValidator = require('mongoose-integer');
 
 
 const benchSchema = new Schema({
+    userId : String,
     description: String,
     creationDate: { type: Date, default: Date.now  }, // Default value
     modifDate: { type: Date, default: Date.now  }, // Default value
@@ -15,7 +16,7 @@ const benchSchema = new Schema({
     image : String,
     location: {
       type: {
-        type: String,
+        type: {default : 'Point'},
         required: true,
         enum: [ 'Point' ]
       },

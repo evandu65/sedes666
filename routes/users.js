@@ -36,7 +36,7 @@ router.get('/:id/votes', loadUserFromParamsMiddleware, function(req,res,next){
  * @apiName CreateUser
  * @apiGroup User
  * @apiVersion 1.0.0
- * @apiDescription Registers a new user.
+ * @apiDescription Register a new user.
  *
  * @apiUse UserInRequestBody
  * @apiUse UserInResponseBody
