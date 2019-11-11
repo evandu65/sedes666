@@ -1,7 +1,24 @@
 require ('dotenv').config();
 
+let currentSession;
+
 function updateRanking(){
-    return console.log("Bonjour");
+
+    return console.log("Classement mis à jour");
+}
+
+exports.publishRanking = function(){
+
+    connection.onopen = function(session) {
+        session.subscribe(`${namespace}.publishRanking`, function(){
+
+        })
+
+
+    };
+
+    connection.open();
+    
 }
 
 exports.createBackendDispatcher = function() {
@@ -28,6 +45,7 @@ exports.createBackendDispatcher = function() {
       });
     
         connection.onopen = function(session) {
+            currentSession = session;
           console.log('Connection to WAMP router established');
           session.register(`${namespace}.add2`, function(args) {
             return args[0] + args[1];
