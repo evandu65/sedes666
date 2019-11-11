@@ -77,6 +77,7 @@ router.delete('/:id', function(req, res, next) {
 /* PATCH a vote */
 router.patch('/:id', loadVoteFromParamsMiddleware, function (req, res, next) {
   // Update only properties present in the request body
+
   if (req.body.type !== undefined) {
     req.vote.type = req.body.type;
   } 
