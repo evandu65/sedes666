@@ -61,13 +61,72 @@ router.get('/', function (req, res, next) {
     pageSize = 10;
   }
 
-  User.find().sort('username').exec(function (err, users) {
-    if (err) {
-      return next(err);
+  User.aggregate([
+    {
+      //équivalent inner join
+      $lookup: {
+        from: 'benches',
+        localField: '_id',
+        foreignField: 'userId',
+        as: 'countBench'
+      }
+    },
+    {
+      $unwind: {
+        path: '$countBench',
+        preserveNullAndEmptyArrays: true
+      }
+    },
+    {
+      //format de sortie
+      $group: {
+        _id: '$_id',
+        username: { "$first": '$username' },
+        password: { "$first": '$password' },
+        countBench: {  $sum: 1 }
+      }
+    },
+    {
+      $sort: {
+        countBench: -1
+      }
+    },
+    {
+      $skip: (page - 1) * pageSize
+    },
+    {
+      $limit: pageSize
     }
-    res.send(users);
+  ],
+    (err, userSort) => {
+      if (err) {
+        return next(err);
+      }
+      User.find().count(function (err, total) {
+        if (err) {
+          return next(err);
+        }
+        let UserSerialized = userSort.map(user => {
+
+          const serialized = new User(user).toJSON();
+
+          serialized.countBench = user.countBench;
+
+          return serialized;
+        });
+
+        res.send(
+          {
+            page: page,
+            pageSize: pageSize,
+            total: total,
+            data: UserSerialized
+          }
+        );
+      });
+    });
   });
-});
+
 /**
  * @api {get} /api/users/:id Retrieve a user
  * @apiName RetrieveUser
@@ -175,75 +234,11 @@ router.get('/:id/votes', loadUserFromParamsMiddleware, function(req,res,next){
  *     }
  */
 
-/* POST new user */
-router.post('/', function (req, res, next) {
-  //encrypt the password
+// /* POST new user */
+// router.post('/', function (req, res, next) {
+//   //encrypt the password
 
-  User.aggregate([
-    {
-      //équivalent inner join
-      $lookup: {
-        from: 'benches',
-        localField: '_id',
-        foreignField: 'userId',
-        as: 'countBench'
-      }
-    },
-    {
-      $unwind: {
-        path: '$countBench',
-        preserveNullAndEmptyArrays: true
-      }
-    },
-    {
-      //format de sortie
-      $group: {
-        _id: '$_id',
-        username: { "$first": '$username' },
-        password: { "$first": '$password' },
-        countBench: {  $sum: 1 }
-      }
-    },
-    {
-      $sort: {
-        countBench: -1
-      }
-    },
-    {
-      $skip: (page - 1) * pageSize
-    },
-    {
-      $limit: pageSize
-    }
-  ],
-    (err, userSort) => {
-      if (err) {
-        return next(err);
-      }
-      User.find().count(function (err, total) {
-        if (err) {
-          return next(err);
-        }
-        let UserSerialized = userSort.map(user => {
-
-          const serialized = new User(user).toJSON();
-
-          serialized.countBench = user.countBench;
-
-          return serialized;
-        });
-
-        res.send(
-          {
-            page: page,
-            pageSize: pageSize,
-            total: total,
-            data: UserSerialized
-          }
-        );
-      });
-    });
-  });
+  
 
       //     -----------------------------
       //     // Apply skip and limit to select the correct page of elements
