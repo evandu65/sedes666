@@ -13,7 +13,7 @@ const debug = require('debug')('demo:users');
  * @api {get} /api/users List users
  * @apiName RetrieveUsers
  * @apiGroup User
- * @apiVersion 6.6.6
+ * @apiVersion 1.0.0
  * @apiDescription Retrieves a paginated list of users ordered by username (in alphabetical order).
  *
  * @apiUse UserInResponseBody
@@ -33,18 +33,18 @@ const debug = require('debug')('demo:users');
  *
  *     [
  *        {
- *        "id": "58b2926f5e1def0123e97281",
- *        "username": "TreyParker",
- *        "password": "$2a$07$hndQIDW9dAPAZMRdyp5Cg.IHk1B0p/bNFHXGBntbXsvIktFWkX1L.",
- *        "registrationDate": "2019-11-9T15:20:56.468Z",
- *        "__v":0
- *        },
- *        {
  *       "id": "58b2926f5e1def0123e97280",
  *       "username": "MattStone",
  *       "password": "EyOLWDkNG2S8U2S4BF24BebhZUgxYpUyoa9qj1SJEOfwhf2PKB9O",
  *       "registrationDate": "2019-12-9T15:10:10.468Z",
  *       "__v":0
+ *        },
+ *        {
+ *        "id": "58b2926f5e1def0123e97281",
+ *        "username": "TreyParker",
+ *        "password": "$2a$07$hndQIDW9dAPAZMRdyp5Cg.IHk1B0p/bNFHXGBntbXsvIktFWkX1L.",
+ *        "registrationDate": "2019-11-9T15:20:56.468Z",
+ *        "__v":0
  *        }
  *     ]
  */
@@ -59,15 +59,15 @@ router.get('/', function (req, res, next) {
 });
 /**
  * @api {get} /api/users/:id Retrieve a user
- * @apiName RetrieveUsers
+ * @apiName RetrieveUser
  * @apiGroup User
- * @apiVersion 6.6.6
+ * @apiVersion 1.0.0
  * @apiDescription Retrieves a user
  *
  * @apiUse UserInResponseBody
  *
  * @apiSuccess (Response body) {String} id The unique identifier of the user 
- * @apiSuccess (Resppnse body) {String} username The name of the user (unique)
+ * @apiSuccess (Response body) {String} username The name of the user (unique)
  * @apiSuccess (Response body) {String} password The secret pass of the user
  * @apiSuccess (Response body) {String} registrationDate The registration date of the user
  *
@@ -90,6 +90,36 @@ router.get('/', function (req, res, next) {
 router.get('/:id',loadUserFromParamsMiddleware, function (req, res, next) {
   res.send(req.user);
 });
+/**
+ * @api {get} /api/users/:id/votes Retrieve a user's votes
+ * @apiName RetrieveUserVotes
+ * @apiGroup User
+ * @apiVersion 1.0.0
+ * @apiDescription Retrieves a user's votes ordered by date (discendant)
+ *
+ * @apiUse UserInResponseBody
+ *
+ * @apiSuccess (Response body) {Boolean} type Vote type, up or down (0=down|1=up)
+ * @apiSuccess (Response body) {String} voteDate The date of the vote
+ * @apiSuccess (Response body) {ObjectId} userId The user id
+ * @apiSuccess (Response body) {ObjectId} benchId The bench id
+ *
+ * @apiExample Example
+ *     GET /api/users/58b2926f5e1def0123e97281/votes
+ *
+ * @apiSuccessExample 200 OK
+ *     HTTP/1.1 200 OK
+ *     Content-Type: application/json
+ *
+ *        {
+ *        "type": 0,
+ *        "username": "TreyParker",
+ *        "password": "$2a$07$hndQIDW9dAPAZMRdyp5Cg.IHk1B0p/bNFHXGBntbXsvIktFWkX1L.",
+ *        "registrationDate": "2019-11-9T15:20:56.468Z",
+ *        "__v":0
+ *        }
+ */
+
 router.get('/:id/votes', loadUserFromParamsMiddleware, function(req,res,next){
   Vote.find({userId : req.user.id}).sort('-voteDate').exec(function (err, votes) {
     if (err) {
@@ -103,7 +133,7 @@ router.get('/:id/votes', loadUserFromParamsMiddleware, function(req,res,next){
  * @api {post} /api/users Create a user
  * @apiName CreateUser
  * @apiGroup User
- * @apiVersion 6.6.6
+ * @apiVersion 1.0.0
  * @apiDescription Register a new user.
  *
  * @apiUse UserInRequestBody

@@ -83,8 +83,7 @@ router.get('/:id/votes', loadBenchFromParamsMiddleware, function(req,res,next){
  *       "seats" : 3,
  *       "image" : "beautifulbench.jpg",
  *       "location" : {
- *         "coordinates" : {
- *          "type" : [52.373660, 4.896888]
+ *         "coordinates" : [52.373660, 4.896888]
  *         }
  *        }
  *
@@ -103,15 +102,11 @@ router.get('/:id/votes', loadBenchFromParamsMiddleware, function(req,res,next){
  *       "material": "Wood",
  *       "ergonomy": "2",
  *       "seats" : 3,
- *       "image" : "58b2926f5e1def0123e97286_1.jpg",
+ *       "image" : "beautifulbench.jpg",
  *       "location" : {
- *         "type" : {
  *          "type" : "Point"
+ *          "coordinates" :  [52.373660, 4.896888]
  *         }
- *         "coordinates" : {
- *          "type" : [52.373660, 4.896888]
- *         }
- *        }
  *       "__v":0
  *     }
  */
@@ -193,18 +188,19 @@ router.post('/', function(req, res, next) {
     return res.status(404).type('text').send(`No bench found with ID ${benchId}`);
   }
 
-
+  module.exports = router;
 
   /**
  * @apiDefine BenchInRequestBody
  * @apiParam (Request body) {String{3..50}} description The description of the bench 
- * @apiParam (Request body) {Boolean} backrest The backrest parameters 0=no 1=yes
+ * @apiParam (Request body) {Boolean{0..1}} backrest The backrest parameter (0 = No|1 = Yes)
  * @apiParam (Request body) {String{0..50}} material The material of the bench (Wood,Metal,Stone,Marble,Plastic)
- * @apiParam (Request body) {Number{0..5}} ergonomy The ergonomy mark of the benc
+ * @apiParam (Request body) {Number{0..5}} ergonomy The ergonomy mark of the bench
  * @apiParam (Request body) {Number{0..3000}} seats The number of seats on the bench
  * @apiParam (Request body) {String{0..50}} image The image of the bench
- * @apiParam (Request body) {Array} location.type Geometry type
- * @apiParam (Request body) {Number{-180,180}} location.coordinates The longitude and latitude of the bench
+ * @apiParam (Request body) {Array} location Location array
+ * @apiParam (Request body) {Array} location.type Geometrical type 
+ * @apiParam (Request body) {Number{-180..180}} location.coordinates The longitude and latitude of the bench
  */
 
 /**
@@ -216,13 +212,14 @@ router.post('/', function(req, res, next) {
  * @apiSuccess (Response body) {String} modificationDate The last modification date of the bench
  * @apiSuccess (Response body) {Number} score The score of the bench (0 by default)
  * @apiSuccess (Response body) {String} material The material of the bench (Wood,Metal,Stone,Marble,Plastic)
- * @apiSuccess (Response body) {Number} ergonomy The ergonomy mark of the bench (0 to 5)
- * @apiSuccess (Response body) {Boolean} backrest The backrest parameters 0=no 1=yes
+ * @apiSuccess (Response body) {Number} ergonomy The ergonomy mark of the bench
+ * @apiSuccess (Response body) {Boolean} backrest The backrest parameters
  * @apiSuccess (Response body) {Number} seats The number of seats on the bench
  * @apiSuccess (Response body) {String} registrationDate The registration date of the user
  * @apiSuccess (Response body) {Array} location Location array
  * @apiSuccess (Response body) {Array} location.type Location type array
- * @apiSuccess (Response body) {Array} location.type Geometry type
+ * @apiSuccess (Response body) {Array} location.type.type Location type
+ * @apiSuccess (Response body) {Array} location.type Geometrical type 
  * @apiSuccess (Response body) {Number} location.coordinates The longitude and latitude of the bench
  */
 
@@ -255,4 +252,3 @@ router.post('/', function(req, res, next) {
  *       }
  *     }
  */
-module.exports = router;
