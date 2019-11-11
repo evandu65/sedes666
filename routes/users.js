@@ -9,7 +9,45 @@ const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const debug = require('debug')('demo:users');
 
-
+/**
+ * @api {get} /api/users List users
+ * @apiName RetrieveUsers
+ * @apiGroup User
+ * @apiVersion 6.6.6
+ * @apiDescription Retrieves a paginated list of users ordered by username (in alphabetical order).
+ *
+ * @apiUse UserInResponseBody
+ *
+ * @apiSuccess (Response body) {String} id The unique identifier of the user 
+ * @apiSuccess (Response body) {String} username The name of the user (unique)
+ * @apiSuccess (Response body) {String} password The secret pass of the user
+ * @apiSuccess (Response body) {String} registrationDate The registration date of the user
+ *
+ * @apiExample Example
+ *     GET /api/users
+ *
+ * @apiSuccessExample 200 OK
+ *     HTTP/1.1 200 OK
+ *     Content-Type: application/json
+ *     Link: &lt;https://sedes666.herokuapp.com/api/users
+ *
+ *     [
+ *        {
+ *        "id": "58b2926f5e1def0123e97281",
+ *        "username": "TreyParker",
+ *        "password": "$2a$07$hndQIDW9dAPAZMRdyp5Cg.IHk1B0p/bNFHXGBntbXsvIktFWkX1L.",
+ *        "registrationDate": "2019-11-9T15:20:56.468Z",
+ *        "__v":0
+ *        },
+ *        {
+ *       "id": "58b2926f5e1def0123e97280",
+ *       "username": "MattStone",
+ *       "password": "EyOLWDkNG2S8U2S4BF24BebhZUgxYpUyoa9qj1SJEOfwhf2PKB9O",
+ *       "registrationDate": "2019-12-9T15:10:10.468Z",
+ *       "__v":0
+ *        }
+ *     ]
+ */
 /* GET users listing. */
 router.get('/', function (req, res, next) {
   User.find().sort('username').exec(function (err, users) {
@@ -19,6 +57,36 @@ router.get('/', function (req, res, next) {
     res.send(users);
   });
 });
+/**
+ * @api {get} /api/users/:id Retrieve a user
+ * @apiName RetrieveUsers
+ * @apiGroup User
+ * @apiVersion 6.6.6
+ * @apiDescription Retrieves a user
+ *
+ * @apiUse UserInResponseBody
+ *
+ * @apiSuccess (Response body) {String} id The unique identifier of the user 
+ * @apiSuccess (Resppnse body) {String} username The name of the user (unique)
+ * @apiSuccess (Response body) {String} password The secret pass of the user
+ * @apiSuccess (Response body) {String} registrationDate The registration date of the user
+ *
+ * @apiExample Example
+ *     GET /api/users/58b2926f5e1def0123e97281
+ *
+ * @apiSuccessExample 200 OK
+ *     HTTP/1.1 200 OK
+ *     Content-Type: application/json
+ *
+ *        {
+ *        "id": "58b2926f5e1def0123e97281",
+ *        "username": "TreyParker",
+ *        "password": "$2a$07$hndQIDW9dAPAZMRdyp5Cg.IHk1B0p/bNFHXGBntbXsvIktFWkX1L.",
+ *        "registrationDate": "2019-11-9T15:20:56.468Z",
+ *        "__v":0
+ *        }
+ */
+
 router.get('/:id',loadUserFromParamsMiddleware, function (req, res, next) {
   res.send(req.user);
 });
@@ -35,7 +103,7 @@ router.get('/:id/votes', loadUserFromParamsMiddleware, function(req,res,next){
  * @api {post} /api/users Create a user
  * @apiName CreateUser
  * @apiGroup User
- * @apiVersion 1.0.0
+ * @apiVersion 6.6.6
  * @apiDescription Register a new user.
  *
  * @apiUse UserInRequestBody
@@ -178,6 +246,7 @@ function userNotFound(res, userId) {
 }
 
 module.exports = router;
+
 /**
  * @apiDefine UserInRequestBody
  * @apiParam (Request body) {String{3..50}} username The name of the user (unique)
