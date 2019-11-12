@@ -10,9 +10,7 @@ function updateRanking(){
 exports.publishRanking = function(){
 
     connection.onopen = function(session) {
-        session.subscribe(`${namespace}.publishRanking`, function(){
-
-        })
+        session.subscribe(`${namespace}.publishRanking`,updateRanking())
 
 
     };
@@ -47,9 +45,7 @@ exports.createBackendDispatcher = function() {
         connection.onopen = function(session) {
             currentSession = session;
           console.log('Connection to WAMP router established');
-          session.register(`${namespace}.add2`, function(args) {
-            return args[0] + args[1];
-          });
+          
           session.register(`${namespace}.updateRanking`, () => updateRanking());
     
     

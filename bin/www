@@ -7,7 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('sedes:server');
 var http = require('http');
-const { createBackendDispatcher } = require('../dispatcher');
+var { createBackendDispatcher } = require('../dispatcher');
 
 /**
  * Get port from environment and store in Express.
