@@ -74,7 +74,21 @@ router.get('/', function (req, res, next) {
     {
       $unwind: {
         path: '$countBench',
+        // Preserve people who have not directed any movie
+        // ("countBench" will be null).
         preserveNullAndEmptyArrays: true
+      }
+    },
+    // Replace "countBench" by 1 when set, or by 0 when null.
+    {
+      $set: {
+        countBench: {
+          $cond: {
+            if: '$countBench',
+            then: 1,
+            else: 0
+          }
+        }
       }
     },
     {
@@ -83,7 +97,9 @@ router.get('/', function (req, res, next) {
         _id: '$_id',
         username: { "$first": '$username' },
         password: { "$first": '$password' },
-        countBench: {  $sum: 1 }
+        // Sum the 1s and 0s in the "countBench" property
+        // to obtain the final count.
+        countBench: { $sum: '$countBench' },
       }
     },
     {
@@ -125,7 +141,7 @@ router.get('/', function (req, res, next) {
         );
       });
     });
-  });
+});
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -157,7 +173,7 @@ router.get('/', function (req, res, next) {
  *        "__v":0
  *        }
  */
-router.get('/:id',loadUserFromParamsMiddleware, function (req, res, next) {
+router.get('/:id', loadUserFromParamsMiddleware, function (req, res, next) {
   res.send(req.user);
 });
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -197,14 +213,14 @@ router.get('/:id',loadUserFromParamsMiddleware, function (req, res, next) {
  *        "__v":0
  *        }
  */
-router.get('/:id/votes', loadUserFromParamsMiddleware, function(req,res,next){
-  Vote.find({userId : req.user.id}).sort('-voteDate').exec(function (err, votes) {
+router.get('/:id/votes', loadUserFromParamsMiddleware, function (req, res, next) {
+  Vote.find({ userId: req.user.id }).sort('-voteDate').exec(function (err, votes) {
     if (err) {
       return next(err);
     }
     res.send(votes);
   });
-})  
+})
 ///////////////////////////////////////////////////////////////////////////////////////////
 /**
  * @api {post} /api/users Create a user
@@ -307,102 +323,102 @@ router.post('/login', function (req, res, next) {
     }
   });
 });
-      
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-      //     -----------------------------
-      //     // Apply skip and limit to select the correct page of elements
-      //     query = query.skip((page - 1) * pageSize).limit(pageSize);
+//     -----------------------------
+//     // Apply skip and limit to select the correct page of elements
+//     query = query.skip((page - 1) * pageSize).limit(pageSize);
 
-      //   // Parse query parameters and apply pagination here...
-      //   query.exec(function (err, benches) {
-      //     if (err) { return next(err); }
-      //     // Send JSON envelope with data
-      //     res.send({
-      //       page: page,
-      //       pageSize: pageSize,
-      //       total: total,
-      //       data: benches
-      //     });
-      //   });
-      //   // });
-      //   User.find().sort('username').exec(function (err, users) {
-      //     if (err) {
-      //       return next(err);
-      //     }
-      //     res.send(users);
-      //   });
-      // });
-      // -----------------------------
-  
+//   // Parse query parameters and apply pagination here...
+//   query.exec(function (err, benches) {
+//     if (err) { return next(err); }
+//     // Send JSON envelope with data
+//     res.send({
+//       page: page,
+//       pageSize: pageSize,
+//       total: total,
+//       data: benches
+//     });
+//   });
+//   // });
+//   User.find().sort('username').exec(function (err, users) {
+//     if (err) {
+//       return next(err);
+//     }
+//     res.send(users);
+//   });
+// });
+// -----------------------------
 
-      /* POST new user */
-      router.post('/', function (req, res, next) {
-        //encrypt the password
 
-        const plainPassword = req.body.password;
-        const saltRounds = 10;
-        bcrypt.hash(plainPassword, saltRounds, function (err, hashedPassword) {
-          if (err) {
-            return next(err);
-          }
+/* POST new user */
+router.post('/', function (req, res, next) {
+  //encrypt the password
 
-          // Create a new document from the JSON in the request body
-          const newUser = new User(req.body);
-          newUser.password = hashedPassword;
-          // Save that document
-          newUser.save(function (err, savedUser) {
-            if (err) {
-              return next(err);
-            }
-            // Send the saved document in the response
-            console.log(`Welcome ${savedUser.username}`);
-            res.send(savedUser);
-          });
-        });
+  const plainPassword = req.body.password;
+  const saltRounds = 10;
+  bcrypt.hash(plainPassword, saltRounds, function (err, hashedPassword) {
+    if (err) {
+      return next(err);
+    }
+
+    // Create a new document from the JSON in the request body
+    const newUser = new User(req.body);
+    newUser.password = hashedPassword;
+    // Save that document
+    newUser.save(function (err, savedUser) {
+      if (err) {
+        return next(err);
+      }
+      // Send the saved document in the response
+      console.log(`Welcome ${savedUser.username}`);
+      res.send(savedUser);
+    });
+  });
+});
+
+/* LOGIN user */
+router.post('/login', function (req, res, next) {
+  User.findOne({ username: req.body.username }).exec(function (err, user) {
+    if (err) {
+      return next(err);
+    } else if (!user) {
+      return res.sendStatus(401);
+
+    }
+    bcrypt.compare(req.body.password, user.password, function (err, valid) {
+      if (err) {
+        return next(err);
+      } else if (!valid) {
+        return res.sendStatus(401);
+      }
+      // Generate a valid JWT which expires in 7 days.
+      const exp = (new Date().getTime() + 7 * 24 * 3600 * 1000) / 1000;
+      const claims = { sub: user._id.toString(), exp: exp };
+      jwt.sign(claims, secretKey, function (err, token) {
+        if (err) { return next(err); }
+        res.send({ token: token }); // Send the token to the client.
+
+        // Login is valid...
+        //res.send(`Welcome ${user.username}!`);
       });
+    });
+  });
+});
 
-      /* LOGIN user */
-      router.post('/login', function (req, res, next) {
-        User.findOne({ username: req.body.username }).exec(function (err, user) {
-          if (err) {
-            return next(err);
-          } else if (!user) {
-            return res.sendStatus(401);
-
-          }
-          bcrypt.compare(req.body.password, user.password, function (err, valid) {
-            if (err) {
-              return next(err);
-            } else if (!valid) {
-              return res.sendStatus(401);
-            }
-            // Generate a valid JWT which expires in 7 days.
-            const exp = (new Date().getTime() + 7 * 24 * 3600 * 1000) / 1000;
-            const claims = { sub: user._id.toString(), exp: exp };
-            jwt.sign(claims, secretKey, function (err, token) {
-              if (err) { return next(err); }
-              res.send({ token: token }); // Send the token to the client.
-
-              // Login is valid...
-              //res.send(`Welcome ${user.username}!`);
-            });
-          });
-        });
-      });
-
-      module.exports = router;
+module.exports = router;
 
 /************************/
 /* DELETE a user */
-router.delete('/:id', function(req, res, next) {
+router.delete('/:id', function (req, res, next) {
   const id = req.params.id;
-  User.deleteOne({ _id: id}, function (err, deleteUser) {
-    if (err){ 
+  User.deleteOne({ _id: id }, function (err, deleteUser) {
+    if (err) {
       return next(err);
     }
-  res.send(`User ${id} has been deleted ;)`)
-});
+    res.send(`User ${id} has been deleted ;)`)
+  });
 });
 ///////////////////////////////////////////////////////////////////////////////////////////
 /* PATCH a user */
@@ -414,15 +430,15 @@ router.patch('/:id', loadUserFromParamsMiddleware, function (req, res, next) {
       return next(err);
     }
     req.user.password = hashedPassword;
-  req.user.save(function (err, savedUser) {
-    if (err) {
-      return next(err);
-    }
+    req.user.save(function (err, savedUser) {
+      if (err) {
+        return next(err);
+      }
 
-    debug(`Updated user "${savedUser.id}"`);
-    res.send(savedUser);
+      debug(`Updated user "${savedUser.id}"`);
+      res.send(savedUser);
+    });
   });
-});
 });
 
 ///////// 
@@ -461,7 +477,7 @@ module.exports = router;
 
 /**
  * @apiDefine UserInResponseBody
- * @apiSuccess (Response body) {String} id The unique identifier of the user 
+ * @apiSuccess (Response body) {String} id The unique identifier of the user
  * @apiSuccess (Response body) {String} username The name of the user (unique)
  * @apiSuccess (Response body) {String} password The secret pass of the user
  * @apiSuccess (Response body) {String} registrationDate The registration date of the user
