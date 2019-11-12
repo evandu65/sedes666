@@ -1,11 +1,20 @@
 const User = require('../models/user');
+const Bench = require('../models/bench');
 
-exports.cleanUpDatabase = async function() {
-    console.log("test1")
-  //await Promise.all([
-   this.timeout=10000;
+exports.cleanUpDatabaseUser = async function() {
+  await Promise.all([
+   
     await User.deleteMany()
- // ]);
-  console.log("test1")
+    
+ ]);
+
+};
+
+exports.cleanUpDatabaseBench = async function() {
+  await Promise.all([
+   
+    await Bench.deleteMany()
+    
+ ]);
 
 };
