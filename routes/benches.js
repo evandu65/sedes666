@@ -192,8 +192,6 @@ router.get('/:id/votes', loadBenchFromParamsMiddleware, function (req, res, next
       });
     
     })  
-  
-  });
 /**
  * @api {post} /api/benches Create a bench
  * @apiName CreateBench
