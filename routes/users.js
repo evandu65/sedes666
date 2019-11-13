@@ -76,7 +76,6 @@ router.get('/', function (req, res, next) {
     },
     // Replace "countBench" by 1 when set, or by 0 when null.
     {
-      //$set => Unrecognized pipeline stage name: '$set'
       $addFields: {
         countBench: {
           $cond: {
