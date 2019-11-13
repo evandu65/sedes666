@@ -206,8 +206,8 @@ router.get('/:id', loadUserFromParamsMiddleware, function (req, res, next) {
 router.get('/:id/votes', loadUserFromParamsMiddleware, function (req, res, next) {
   
   // Count total votes matching the URL query parameters
-  const countQuery = req;
-  countQuery.count(function (err, total) {
+ /* const countQuery = req;
+  Vote.count(function (err, total) {
     if (err) {
       return next(err);
     }
@@ -222,15 +222,15 @@ router.get('/:id/votes', loadUserFromParamsMiddleware, function (req, res, next)
     query = query.skip((page - 1) * pageSize).limit(pageSize);
 
     // Add the Link header to the response
-    utils.addLinkHeader('/api/users/:id/votes', page, pageSize, total, res);
-    query.find({ userId: req.user.id }).sort('-voteDate').exec(function (err, votes) {
+    utils.addLinkHeader('/api/users/:id/votes', page, pageSize, total, res);*/
+    Vote.find({ userId: req.user.id }).sort('-voteDate').exec(function (err, votes) {
       if (err) {
         return next(err);
       }
       res.send(votes);
     });
   })
-  });
+ /* });*/
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////
