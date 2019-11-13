@@ -76,7 +76,7 @@ router.get('/', function (req, res, next) {
     },
     // Replace "countBench" by 1 when set, or by 0 when null.
     {
-      //$set
+      //$set => Unrecognized pipeline stage name: '$set'
       $addFields: {
         countBench: {
           $cond: {
@@ -214,7 +214,7 @@ router.get('/:id/votes', loadUserFromParamsMiddleware, function (req, res, next)
     }
 
     // Prepare the initial database query from the URL query parameters
-    let query = queryVotes(req);
+    let query = req;
 
     // Parse pagination parameters from URL query parameters
     const { page, pageSize } = utils.getPaginationParameters(req);
