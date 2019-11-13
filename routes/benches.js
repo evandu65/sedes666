@@ -183,42 +183,6 @@ router.get('/:id', loadBenchFromParamsMiddleware, function (req, res, next) {
  *        }
  */
 router.get('/:id/votes', loadBenchFromParamsMiddleware, function (req, res, next) {
-  // Parse the "page" param (default to 1 if invalid)
-  let page = parseInt(req.query.page, 10);
-  if (isNaN(page) || page < 1) {
-    page = 1;
-  }
-  // Parse the "pageSize" param (default to 100 if invalid)
-  let pageSize = parseInt(req.query.pageSize, 10);
-  if (isNaN(pageSize) || pageSize < 0 || pageSize > 100) {
-    pageSize = 10;
-  }
-
-  Vote.find().sort('-voteDate').count(function (err, total) {
-    if (err) {
-      return next(err);
-    };
-
-    let query = Vote.find();
-
-    // Apply skip and limit to select the correct page of elements
-    query = query.skip((page - 1) * pageSize).limit(pageSize);
-
-    // Parse query parameters and apply pagination here...
-    query.exec(function (err, benches) {
-      if (err) { return next(err); }
-      // Send JSON envelope with data
-      res.send({
-        page: page,
-        pageSize: pageSize,
-        total: total,
-        data: query
-      });
-    });
-  });
-});
-
-/*router.get('/:id/votes', loadBenchFromParamsMiddleware, function (req, res, next) {
       Vote.find({ benchId: req.bench.id }).sort('-voteDate').exec(function (err, votes) {
         if (err) {
           return next(err);
@@ -227,7 +191,7 @@ router.get('/:id/votes', loadBenchFromParamsMiddleware, function (req, res, next
       });
     
     })  
-    */
+    
 /**
  * @api {post} /api/benches Create a bench
  * @apiName CreateBench
