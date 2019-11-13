@@ -194,17 +194,12 @@ router.get('/:id/votes', loadBenchFromParamsMiddleware, function (req, res, next
     pageSize = 10;
   }
 
-  Bench.find().sort('score').count(function (err, total) {
+  Vote.find().sort('-voteDate').count(function (err, total) {
     if (err) {
       return next(err);
     };
 
-    let query = Bench.find();
-
-    // Limit benches to only those with a good enough score
-    if (!isNaN(req.query.ratedAtLeast)) {
-      query = query.where('-voteDate').gte(req.query.ratedAtLeast);
-    }
+    let query = Vote.find();
 
     // Apply skip and limit to select the correct page of elements
     query = query.skip((page - 1) * pageSize).limit(pageSize);
