@@ -187,6 +187,7 @@ router.get('/:id', loadUserFromParamsMiddleware, function (req, res, next) {
  *     Content-Type: application/json
  *
  *        {
+ *        "_id" : "5dc3f77bed705e0017873ed1",
  *        "type": true,
  *        "voteDate": "2019-11-9T15:20:56.468Z",
  *        "userId": "58b2926f5e1def0123e97281",
@@ -194,6 +195,7 @@ router.get('/:id', loadUserFromParamsMiddleware, function (req, res, next) {
  *        "__v":0
  *        },
  *        {
+ *        "_id" : "5dc978cb7245260017491963",
  *        "type": false,
  *        "voteDate": "2019-11-9T15:20:26.468Z",
  *        "userId": "58b2926f5e1def0123e97281",

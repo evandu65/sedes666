@@ -25,6 +25,7 @@ const debug = require('debug')('demo:votes');
  *
  *     [
  *        {
+ *        "id" : "5dc3f77bed705e0017873ed1"
  *        "type": true,
  *        "voteDate": "2019-11-9T15:20:56.468Z",
  *        "userId": "5a2539b41c574006c46f1a07",
@@ -32,6 +33,7 @@ const debug = require('debug')('demo:votes');
  *        "__v":0
  *        },
  *        {
+ *        "_id" : "5dc978cb7245260017491963",
  *        "type": false,
  *        "voteDate": "2019-11-9T15:20:26.468Z",
  *        "userId": "58b2926f5e1def0123e97281",
@@ -323,15 +325,15 @@ function voteNotFound(res, voteId) {
  *       "message": "vote validation failed",
  *       "errors": {
  *         "benchId": {
- *           "kind": "not found",
+ *           "kind": "notFound",
  *           "message": "Path `benchId` not found",
  *           "name": "ValidatorError",
  *           "path": "benchId",
  *           "properties": {
- *             "message": "Path `{PATH}` (`{VALUE}`) not foudn",
+ *             "message": "Path `{PATH}` (`{VALUE}`) not found",
  *             "minlength": 3,
  *             "path": "benchId",
- *             "type": "not found",
+ *             "type": "notFound",
  *             "value": "0"
  *           },
  *           "value": "0"
