@@ -183,24 +183,8 @@ router.get('/:id', loadBenchFromParamsMiddleware, function (req, res, next) {
  *        }
  */
 router.get('/:id/votes', loadBenchFromParamsMiddleware, function (req, res, next) {
-    // Count total votes matching the URL query parameters
-    const countQuery = req;
-    countQuery.count(function (err, total) {
-      if (err) {
-        return next(err);
-      }
-  
-      // Prepare the initial database query from the URL query parameters
-      let query = queryVotes(req);
-  
-      // Parse pagination parameters from URL query parameters
-      const { page, pageSize } = utils.getPaginationParameters(req);
-  
-      // Apply the pagination to the database query
-      query = query.skip((page - 1) * pageSize).limit(pageSize);
-  
-      // Add the Link header to the response
-      query.find({ benchId: req.bench.id }).sort('-voteDate').exec(function (err, votes) {
+
+      Vote.find({ benchId: req.bench.id }).sort('-voteDate').exec(function (err, votes) {
         if (err) {
           return next(err);
         }
