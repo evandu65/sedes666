@@ -511,7 +511,7 @@ module.exports = router;
 /**
  * @apiDefine UserInRequestBody
  * @apiParam (Request body) {String{3..50}} username The name of the user (unique)
- * @apiParam (Request body) {String{3..50}} password The secret pass of the suser
+ * @apiParam (Request body) {String{3..60}} password The secret pass of the suser
  */
 
 /**
@@ -557,7 +557,7 @@ module.exports = router;
  *           "name": "ValidatorError",
  *           "path": "username",
  *           "properties": {
- *             "message": "Path `{PATH}` (`{VALUE}`) is shorter than the minimum allowed length (3).",
+ *             "message": "Path `{PATH}` is shorter than the minimum allowed length (3).",
  *             "minlength": 3,
  *             "path": "username",
  *             "type": "minlength",
