@@ -183,14 +183,15 @@ router.get('/:id', loadBenchFromParamsMiddleware, function (req, res, next) {
  *        }
  */
 router.get('/:id/votes', loadBenchFromParamsMiddleware, function (req, res, next) {
-  Vote.find({ benchId: req.bench.id }).sort('-voteDate').exec(function (err, votes) {
-    if (err) {
-      return next(err);
-    }
-    res.send(votes);
-  });
-
-})  
+      Vote.find({ benchId: req.bench.id }).sort('-voteDate').exec(function (err, votes) {
+        if (err) {
+          return next(err);
+        }
+        res.send(votes);
+      });
+    
+    })  
+    
 /**
  * @api {post} /api/benches Create a bench
  * @apiName CreateBench
