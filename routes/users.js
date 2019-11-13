@@ -207,13 +207,14 @@ router.get('/:id', loadUserFromParamsMiddleware, function (req, res, next) {
 router.get('/:id/votes', loadUserFromParamsMiddleware, function (req, res, next) {
   
   // Count total votes matching the URL query parameters
-  Vote.find.count(function (err, total) {
+  const countQuery = req;
+  countQuery.count(function (err, total) {
     if (err) {
       return next(err);
     }
 
     // Prepare the initial database query from the URL query parameters
-    let query = Vote.find;
+    let query = queryVotes(req);
 
     // Parse pagination parameters from URL query parameters
     const { page, pageSize } = utils.getPaginationParameters(req);
