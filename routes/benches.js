@@ -212,7 +212,7 @@ router.get('/:id/votes', loadBenchFromParamsMiddleware, function (req, res, next
         page: page,
         pageSize: pageSize,
         total: total,
-        data: votes
+        data: query
       });
     });
   });
