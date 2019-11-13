@@ -204,26 +204,35 @@ router.get('/:id', loadUserFromParamsMiddleware, function (req, res, next) {
  *        }
  */
 router.get('/:id/votes', loadUserFromParamsMiddleware, function (req, res, next) {
-  // // Parse the "page" param (default to 1 if invalid)
-  // let page = parseInt(req.query.page, 10);
-  // if (isNaN(page) || page < 1) {
-  //   page = 1;
-  // }
-  // // Parse the "pageSize" param (default to 100 if invalid)
-  // let pageSize = parseInt(req.query.pageSize, 10);
-  // if (isNaN(pageSize) || pageSize < 0 || pageSize > 100) {
-  //   pageSize = 100;
-  // }
-  // // Apply skip and limit to select the correct page of elements
-  // query = query.skip((page - 1) * pageSize).limit(pageSize);
-
-  Vote.find({ userId: req.user.id }).sort('-voteDate').exec(function (err, votes) {
+  
+  // Count total votes matching the URL query parameters
+  const countQuery = req;
+  countQuery.count(function (err, total) {
     if (err) {
       return next(err);
     }
-    res.send(votes);
+
+    // Prepare the initial database query from the URL query parameters
+    let query = queryVotes(req);
+
+    // Parse pagination parameters from URL query parameters
+    const { page, pageSize } = utils.getPaginationParameters(req);
+
+    // Apply the pagination to the database query
+    query = query.skip((page - 1) * pageSize).limit(pageSize);
+
+    // Add the Link header to the response
+    utils.addLinkHeader('/api/users/:id/votes', page, pageSize, total, res);
+    query.find({ userId: req.user.id }).sort('-voteDate').exec(function (err, votes) {
+      if (err) {
+        return next(err);
+      }
+      res.send(votes);
+    });
+  })
   });
-})
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 /**
  * @api {post} /api/users Create a user
