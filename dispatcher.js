@@ -1,4 +1,8 @@
-require ('dotenv').config();
+try {
+  require('dotenv').config();
+} catch (err) {
+  console.log('No .env file loaded');
+}
 
 let currentSession;
 
