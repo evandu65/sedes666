@@ -258,7 +258,7 @@ pre code.sample-request-response-json {
   bottom: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  background-color: #f5f5f5;
+  background-color: #970b0b;
   z-index: 10;
 }
 
@@ -294,7 +294,7 @@ pre code.sample-request-response-json {
     position: relative;
     z-index: 2;
     background-color: #0088cc;
-    color: #ffffff;
+    color: #c72323;
 }
 
 .sidenav > li.has-modifications a {
@@ -313,7 +313,7 @@ pre code.sample-request-response-json {
   left: 0px;
   position: fixed;
   padding: 16px 20px 10px 20px;
-  background-color: #F5F5F5;
+  background-color: #c72323;
   z-index: 11;
 }
 
@@ -330,7 +330,7 @@ pre code.sample-request-response-json {
   text-align: center;
   right: 28px;
   top: 17px;
-  background-color: #fff;
+  background-color: #c72323;
 }
 
 /* ------------------------------------------------------------------------------------------
@@ -557,7 +557,7 @@ p.deprecated span{
   }
 
   pre {
-    background-color: #ffffff;
+    background-color: #c72323;
     color: #000000;
     padding: 10px;
     border: #808080 1px solid;
