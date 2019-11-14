@@ -359,16 +359,6 @@ router.post('/login', function (req, res, next) {
       return next(err);
     } else if (!user) {
       return res.sendStatus(401);
-    }
-  });
-});
-/* LOGIN user */
-router.post('/login', function (req, res, next) {
-  User.findOne({ username: req.body.username }).exec(function (err, user) {
-    if (err) {
-      return next(err);
-    } else if (!user) {
-      return res.sendStatus(401);
 
     }
     bcrypt.compare(req.body.password, user.password, function (err, valid) {
