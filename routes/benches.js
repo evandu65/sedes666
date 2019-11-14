@@ -408,14 +408,14 @@ function benchNotFound(res, benchId) {
 /**
  * @apiDefine BenchInRequestBody
  * @apiParam (Request body) {String{3..50}} description The description of the bench 
- * @apiParam (Request body) {Boolean{0..1}} backrest The backrest parameter (0 = No|1 = Yes)
+ * @apiParam (Request body) {Boolean{Boolean{0 = false = no | 1 = true = yes}} backrest The backrest parameter
  * @apiParam (Request body) {String{0..50}} material The material of the bench (Wood,Metal,Stone,Marble,Plastic)
  * @apiParam (Request body) {Number{0..5}} ergonomy The ergonomy mark of the bench
  * @apiParam (Request body) {Number{0..3000}} seats The number of seats on the bench
  * @apiParam (Request body) {String{0..50}} image The image of the bench
  * @apiParam (Request body) {Array} location Location array
  * @apiParam (Request body) {String{0..50}} location.type Geometrical type 
- * @apiParam (Request body) {Number{-180..180}} location.coordinates The longitude and latitude of the bench
+ * @apiParam (Request body) {Number{[-180..180,-90..90]}} location.coordinates The longitude and latitude of the bench
  */
 
 /**

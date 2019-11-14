@@ -306,7 +306,7 @@ function voteNotFound(res, voteId) {
 ///////////////////////////////////////////////////////////////////////////////////////////
 /**
  * @apiDefine VoteInRequestBody
- * @apiSuccess (Response body) {Boolean} type Vote type, up or down (0=false=down|1=true=up)
+ * @apiSuccess (Response body) {Boolean{0 = false = down | 1 = true = up}} type Vote type, up or down 
  * @apiSuccess (Response body) {ObjectId} userId The user id
  * @apiSuccess (Response body) {ObjectId} benchId The bench id
  */
@@ -314,7 +314,7 @@ function voteNotFound(res, voteId) {
 /**
  * @apiDefine VoteInResponseBody
  * @apiSuccess (Response body) {String} id The unique identifier of the vote
- * @apiSuccess (Response body) {Boolean} type Vote type, up or down (0=false=down|1=true=up)
+ * @apiSuccess (Response body) {Boolean} type Vote type, up or down
  * @apiSuccess (Response body) {String} voteDate The date of the vote
  * @apiSuccess (Response body) {ObjectId} userId The user id
  * @apiSuccess (Response body) {ObjectId} benchId The bench id
