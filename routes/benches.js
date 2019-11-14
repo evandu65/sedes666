@@ -6,6 +6,34 @@ const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const debug = require('debug')('demo:benches');
 
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const secretKey = process.env.SECRET_KEY || 'changeme';
+
+///////////////////////////////////////////////////////////////////////////////////////////
+// AUTHENTICATION
+function authenticate(req, res, next) {
+  // Ensure the header is present.
+  const authorization = req.get('Authorization');
+  if (!authorization) {
+    return res.status(401).send('Authorization header is missing');
+  }
+  // Check that the header has the correct format.
+  const match = authorization.match(/^Bearer (.+)$/);
+  if (!match) {
+    return res.status(401).send('Authorization header is not a bearer token');
+  }
+  // Extract and verify the JWT.
+  const token = match[1];
+  jwt.verify(token, secretKey, function(err, payload) {
+    if (err) {
+      return res.status(401).send('Your token is invalid or has expired');
+    } else {
+      req.currentUserId = payload.sub;
+      next(); // Pass the ID of the authenticated user to the next middleware.
+    }
+  });
+}
 ///////////////////////////////////////////////////////////////////////////////////////////
 /**
  * @api {get} /api/benches Retrieve all benches
@@ -64,7 +92,7 @@ const debug = require('debug')('demo:benches');
  *     ]
  */
 /* GET benches listing. */
-router.get('/', function (req, res, next) {
+router.get('/',authenticate, function (req, res, next) {
   // Parse the "page" param (default to 1 if invalid)
   let page = parseInt(req.query.page, 10);
   if (isNaN(page) || page < 1) {
@@ -144,7 +172,7 @@ router.get('/', function (req, res, next) {
  *     }
  */
 
-router.get('/:id', loadBenchFromParamsMiddleware, function (req, res, next) {
+router.get('/:id',authenticate, loadBenchFromParamsMiddleware, function (req, res, next) {
   res.send(req.bench);
 });
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -182,7 +210,7 @@ router.get('/:id', loadBenchFromParamsMiddleware, function (req, res, next) {
  *        "__v":0
  *        }
  */
-router.get('/:id/votes', loadBenchFromParamsMiddleware, function (req, res, next) {
+router.get('/:id/votes',authenticate, loadBenchFromParamsMiddleware, function (req, res, next) {
       Vote.find({ benchId: req.bench.id }).sort('-voteDate').exec(function (err, votes) {
         if (err) {
           return next(err);
@@ -243,7 +271,7 @@ router.get('/:id/votes', loadBenchFromParamsMiddleware, function (req, res, next
  *       "__v":0
  *     }
  */
-router.post('/', function (req, res, next) {
+router.post('/',authenticate, function (req, res, next) {
   // Create a new document from the JSON in the request body
   const newBench = new Bench(req.body);
   // Save that document
@@ -272,7 +300,7 @@ router.post('/', function (req, res, next) {
  * @apiSuccessExample 204 No Content
  *     HTTP/1.1 204 No Content
  */
-router.delete('/:id', function (req, res, next) {
+router.delete('/:id',authenticate, function (req, res, next) {
   const id = req.params.id;
   Bench.deleteOne({ _id: id }, function (err, deleteBench) {
     if (err) {
@@ -329,7 +357,7 @@ router.delete('/:id', function (req, res, next) {
  *     }
  */
 /* PATCH a bench */
-router.patch('/:id', loadBenchFromParamsMiddleware, function (req, res, next) {
+router.patch('/:id',authenticate, loadBenchFromParamsMiddleware, function (req, res, next) {
   // Update only properties present in the request body
   if (req.body.score !== undefined) {
     req.bench.score = req.body.score;

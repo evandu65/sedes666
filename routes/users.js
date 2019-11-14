@@ -9,6 +9,32 @@ const secretKey = process.env.SECRET_KEY || 'changeme';
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const debug = require('debug')('demo:users');
+
+///////////////////////////////////////////////////////////////////////////////////////////
+// AUTHENTICATION
+function authenticate(req, res, next) {
+  // Ensure the header is present.
+  const authorization = req.get('Authorization');
+  if (!authorization) {
+    return res.status(401).send('Authorization header is missing');
+  }
+  // Check that the header has the correct format.
+  const match = authorization.match(/^Bearer (.+)$/);
+  if (!match) {
+    return res.status(401).send('Authorization header is not a bearer token');
+  }
+  // Extract and verify the JWT.
+  const token = match[1];
+  jwt.verify(token, secretKey, function(err, payload) {
+    if (err) {
+      return res.status(401).send('Your token is invalid or has expired');
+    } else {
+      req.currentUserId = payload.sub;
+      next(); // Pass the ID of the authenticated user to the next middleware.
+    }
+  });
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 /**
  * @api {get} /api/users Retrieve all users
@@ -44,7 +70,7 @@ const debug = require('debug')('demo:users');
  *        }
  *     ]
  */
-router.get('/', function (req, res, next) {
+router.get('/',authenticate, function (req, res, next) {
   // Parse the "page" param (default to 1 if invalid)
   let page = parseInt(req.query.page, 10);
   if (isNaN(page) || page < 1) {
@@ -165,7 +191,7 @@ router.get('/', function (req, res, next) {
  *        "__v":0
  *        }
  */
-router.get('/:id', loadUserFromParamsMiddleware, function (req, res, next) {
+router.get('/:id', authenticate, loadUserFromParamsMiddleware, function (req, res, next) {
   res.send(req.user);
 });
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -203,7 +229,7 @@ router.get('/:id', loadUserFromParamsMiddleware, function (req, res, next) {
  *        "__v":0
  *        }
  */
-router.get('/:id/votes', loadUserFromParamsMiddleware, function (req, res, next) {
+router.get('/:id/votes',authenticate, loadUserFromParamsMiddleware, function (req, res, next) {
   
   // Count total votes matching the URL query parameters
  /* const countQuery = req;
@@ -291,6 +317,7 @@ router.post('/', function (req, res, next) {
     });
   });
 });
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 /**
  * @api {post} /api/users/login Login a user
@@ -335,61 +362,6 @@ router.post('/login', function (req, res, next) {
     }
   });
 });
-
-///////////////////////////////////////////////////////////////////////////////////////////
-
-//     -----------------------------
-//     // Apply skip and limit to select the correct page of elements
-//     query = query.skip((page - 1) * pageSize).limit(pageSize);
-
-//   // Parse query parameters and apply pagination here...
-//   query.exec(function (err, benches) {
-//     if (err) { return next(err); }
-//     // Send JSON envelope with data
-//     res.send({
-//       page: page,
-//       pageSize: pageSize,
-//       total: total,
-//       data: benches
-//     });
-//   });
-//   // });
-//   User.find().sort('username').exec(function (err, users) {
-//     if (err) {
-//       return next(err);
-//     }
-//     res.send(users);
-//   });
-// });
-// -----------------------------
-
-
-/* POST new user */
-router.post('/', function (req, res, next) {
-  //encrypt the password
-
-  const plainPassword = req.body.password;
-  const saltRounds = 10;
-  bcrypt.hash(plainPassword, saltRounds, function (err, hashedPassword) {
-    if (err) {
-      return next(err);
-    }
-
-    // Create a new document from the JSON in the request body
-    const newUser = new User(req.body);
-    newUser.password = hashedPassword;
-    // Save that document
-    newUser.save(function (err, savedUser) {
-      if (err) {
-        return next(err);
-      }
-      // Send the saved document in the response
-      console.log(`Welcome ${savedUser.username}`);
-      res.send(savedUser);
-    });
-  });
-});
-
 /* LOGIN user */
 router.post('/login', function (req, res, next) {
   User.findOne({ username: req.body.username }).exec(function (err, user) {
@@ -419,6 +391,37 @@ router.post('/login', function (req, res, next) {
   });
 });
 
+///////////////////////////////////////////////////////////////////////////////////////////
+
+//     -----------------------------
+//     // Apply skip and limit to select the correct page of elements
+//     query = query.skip((page - 1) * pageSize).limit(pageSize);
+
+//   // Parse query parameters and apply pagination here...
+//   query.exec(function (err, benches) {
+//     if (err) { return next(err); }
+//     // Send JSON envelope with data
+//     res.send({
+//       page: page,
+//       pageSize: pageSize,
+//       total: total,
+//       data: benches
+//     });
+//   });
+//   // });
+//   User.find().sort('username').exec(function (err, users) {
+//     if (err) {
+//       return next(err);
+//     }
+//     res.send(users);
+//   });
+// });
+// -----------------------------
+
+
+
+
+
 module.exports = router;
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -439,7 +442,7 @@ module.exports = router;
  *     HTTP/1.1 204 No Content
  */
 /* DELETE a user */
-router.delete('/:id', function (req, res, next) {
+router.delete('/:id', authenticate, function (req, res, next) {
   const id = req.params.id;
   User.deleteOne({ _id: id }, function (err, deleteUser) {
     if (err) {
@@ -483,7 +486,7 @@ router.delete('/:id', function (req, res, next) {
  *     }
  */
 /* PATCH a user */
-router.patch('/:id', loadUserFromParamsMiddleware, function (req, res, next) {
+router.patch('/:id', authenticate, loadUserFromParamsMiddleware, function (req, res, next) {
   const plainPassword = req.body.password;
   const saltRounds = 10;
   bcrypt.hash(plainPassword, saltRounds, function (err, hashedPassword) {

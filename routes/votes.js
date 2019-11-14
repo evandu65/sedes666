@@ -43,7 +43,7 @@ const debug = require('debug')('demo:votes');
  *     ]
  */
 /* GET votes listing. */
-router.get('/', function (req, res, next) {
+router.get('/',authenticate, function (req, res, next) {
   Vote.find().sort('creationDate').exec(function (err, votes) {
     if (err) {
       return next(err);
@@ -88,7 +88,7 @@ router.get('/:id',loadVoteFromParamsMiddleware, function (req, res, next) {
  *        "__v":0
  *        }
  */
-router.get('/:id', loadVoteFromParamsMiddleware, function (req, res, next) {
+router.get('/:id',authenticate, loadVoteFromParamsMiddleware, function (req, res, next) {
   res.send(req.vote);
 });
 
@@ -130,7 +130,7 @@ router.get('/:id', loadVoteFromParamsMiddleware, function (req, res, next) {
  *        }
  */
 /* POST new vote */
-router.post('/', function(req, res, next) {
+router.post('/', authenticate, function(req, res, next) {
   // Create a new document from the JSON in the request body
   const newVote = new Vote(req.body);
 
@@ -190,7 +190,7 @@ router.post('/', function(req, res, next) {
  *     HTTP/1.1 204 No Content
  */
 /* DELETE a vote */
-router.delete('/:id', function(req, res, next) {
+router.delete('/:id',authenticate, function(req, res, next) {
   const id = req.params.id;
   Vote.deleteOne({ _id: id}, function (err, deleteVote) {
     if (err){ 
@@ -235,7 +235,7 @@ router.delete('/:id', function(req, res, next) {
  *     }
  */
 /* PATCH a vote */
-router.patch('/:id', loadVoteFromParamsMiddleware, function (req, res, next) {
+router.patch('/:id',authenticate, loadVoteFromParamsMiddleware, function (req, res, next) {
   // Update only properties present in the request body
 
   if (req.body.type !== undefined) {
