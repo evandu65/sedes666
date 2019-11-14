@@ -48,7 +48,7 @@ h2 {
 }
 
 section {
-  border-top: 1px solid #ebebeb;
+  border-top: 1px solid #c72323;
   padding: 30px 0;
 }
 
@@ -109,17 +109,17 @@ th {
   font-family: "Source Sans Pro", sans-serif;
   font-weight: 700;
   padding: 4px 8px;
-  border: #e0e0e0 1px solid;
+  border: #c72323 1px solid;
 }
 
 td {
   vertical-align: top;
   padding: 10px 8px 0 8px;
-  border: #e0e0e0 1px solid;
+  border: #c72323 1px solid;
 }
 
 #generator .content {
-  color: #b0b0b0;
+  color: #790606;
   border-top: 1px solid #ebebeb;
   padding: 10px 0;
 }
@@ -140,7 +140,7 @@ td {
  * ------------------------------------------------------------------------------------------ */
 
 #apidoc .apidoc {
-  border-top: 1px solid #ebebeb;
+  border-top: 1px solid #c72323;
   padding: 30px 0;
 }
 
@@ -167,7 +167,7 @@ td {
  * ------------------------------------------------------------------------------------------ */
 pre {
   background-color: #292b36;
-  color: #ffffff;
+  color: #c72323;
   padding: 10px;
   border-radius: 6px;
   position: relative;
