@@ -7,10 +7,19 @@ const userSchema = new Schema({
     type: String,
     unique: true,
     required: true,
+    minlength: 3,
+    maxlength: 50,
+    validate:
+    [{
+      validator: validateUsernameUniqueness,
+      message:'Username {VALUE} already exists'
+    }],
   },
   password: {
     type : String,
-    required: true
+    required: true,
+    minlength: 3,
+    maxlength:60,
   },
   registrationDate: { type: Date, default: Date.now  }, // Default value
   meta: { // Nested document
@@ -18,5 +27,11 @@ const userSchema = new Schema({
   }
 }
 );
+
+function validateUsernameUniqueness(value) {
+  return this.constructor.findOne().where('username').equals(value).exec().then((existingUser) => {
+    return !existingUser || existingUser._id.equals(this._id);
+  });
+}
 
 module.exports = mongoose.model('User', userSchema);
