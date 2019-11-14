@@ -1,3 +1,4 @@
+///////////////////////////////////////////////////////////////////////////////////////////
 var express = require('express');
 var router = express.Router();
 const Bench = require('../models/bench');
@@ -89,7 +90,6 @@ function authenticate(req, res, next) {
  *     }
  *     ]
  */
-/* GET benches listing. */
 router.get('/',authenticate, function (req, res, next) {
   // Parse the "page" param (default to 1 if invalid)
   let page = parseInt(req.query.page, 10);
@@ -169,7 +169,6 @@ router.get('/',authenticate, function (req, res, next) {
  *       "__v":0
  *     }
  */
-
 router.get('/:id',authenticate, loadBenchFromParamsMiddleware, function (req, res, next) {
   res.send(req.bench);
 });
@@ -217,7 +216,7 @@ router.get('/:id/votes',authenticate, loadBenchFromParamsMiddleware, function (r
       });
     
     })  
-    
+///////////////////////////////////////////////////////////////////////////////////////////    
 /**
  * @api {post} /api/benches Create a bench
  * @apiName CreateBench
@@ -307,7 +306,6 @@ router.delete('/:id',authenticate, function (req, res, next) {
     res.send(`bench ${id} has been deleted ;)`)
   });
 });
-/* */
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 /**
@@ -354,7 +352,6 @@ router.delete('/:id',authenticate, function (req, res, next) {
  *       "__v":0
  *     }
  */
-/* PATCH a bench */
 router.patch('/:id',authenticate, loadBenchFromParamsMiddleware, function (req, res, next) {
   // Update only properties present in the request body
   if (req.body.score !== undefined) {
@@ -380,8 +377,8 @@ router.patch('/:id',authenticate, loadBenchFromParamsMiddleware, function (req, 
     res.send(savedBench);
   });
 });
-/************************/
-/* Middle ware verification */
+
+///////////////////////////////////////////////////////////////////////////////////////////
 function loadBenchFromParamsMiddleware(req, res, next) {
 
   const benchId = req.params.id;
@@ -402,12 +399,12 @@ function loadBenchFromParamsMiddleware(req, res, next) {
     next();
   });
 }
+///////////////////////////////////////////////////////////////////////////////////////////
 function benchNotFound(res, benchId) {
   return res.status(404).type('text').send(`No bench found with ID ${benchId}`);
 }
 
-module.exports = router;
-
+///////////////////////////////////////////////////////////////////////////////////////////
 /**
  * @apiDefine BenchInRequestBody
  * @apiParam (Request body) {String{3..50}} description The description of the bench 
@@ -489,3 +486,4 @@ module.exports = router;
  *     }
  */
 
+module.exports = router;

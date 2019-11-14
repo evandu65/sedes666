@@ -1,3 +1,4 @@
+///////////////////////////////////////////////////////////////////////////////////////////
 var express = require('express');
 var router = express.Router();
 const Vote = require('../models/vote');
@@ -68,7 +69,6 @@ function authenticate(req, res, next) {
  *        }
  *     ]
  */
-/* GET votes listing. */
 router.get('/',authenticate, function (req, res, next) {
   Vote.find().sort('creationDate').exec(function (err, votes) {
     if (err) {
@@ -215,7 +215,6 @@ router.post('/', authenticate, function(req, res, next) {
  * @apiSuccessExample 204 No Content
  *     HTTP/1.1 204 No Content
  */
-/* DELETE a vote */
 router.delete('/:id',authenticate, function(req, res, next) {
   const id = req.params.id;
   Vote.deleteOne({ _id: id}, function (err, deleteVote) {
@@ -260,7 +259,6 @@ router.delete('/:id',authenticate, function(req, res, next) {
  *        "__v":0
  *     }
  */
-/* PATCH a vote */
 router.patch('/:id',authenticate, loadVoteFromParamsMiddleware, function (req, res, next) {
   // Update only properties present in the request body
 
@@ -278,7 +276,7 @@ router.patch('/:id',authenticate, loadVoteFromParamsMiddleware, function (req, r
   });
 });
 
-
+///////////////////////////////////////////////////////////////////////////////////////////
 
 function loadVoteFromParamsMiddleware(req, res, next) {
 
@@ -300,11 +298,12 @@ function loadVoteFromParamsMiddleware(req, res, next) {
     next();
   });
 }
+///////////////////////////////////////////////////////////////////////////////////////////
 function voteNotFound(res, voteId) {
   return res.status(404).type('text').send(`No vote found with ID ${voteId}`);
 }
-///////////////////////////////////////////////////////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////////////////////
 /**
  * @apiDefine VoteInRequestBody
  * @apiSuccess (Response body) {Boolean} type Vote type, up or down (0=false=down|1=true=up)
@@ -367,4 +366,5 @@ function voteNotFound(res, voteId) {
  *       }
  *     }
  */
+
   module.exports = router;

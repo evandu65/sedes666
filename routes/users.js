@@ -230,34 +230,13 @@ router.get('/:id', authenticate, loadUserFromParamsMiddleware, function (req, re
  *        }
  */
 router.get('/:id/votes',authenticate, loadUserFromParamsMiddleware, function (req, res, next) {
-  
-  // Count total votes matching the URL query parameters
- /* const countQuery = req;
-  Vote.count(function (err, total) {
-    if (err) {
-      return next(err);
-    }
-
-    // Prepare the initial database query from the URL query parameters
-    let query = queryVotes(req);
-
-    // Parse pagination parameters from URL query parameters
-    const { page, pageSize } = utils.getPaginationParameters(req);
-
-    // Apply the pagination to the database query
-    query = query.skip((page - 1) * pageSize).limit(pageSize);
-
-    // Add the Link header to the response
-    utils.addLinkHeader('/api/users/:id/votes', page, pageSize, total, res);*/
-    Vote.find({ userId: req.user.id }).sort('-voteDate').exec(function (err, votes) {
+      Vote.find({ userId: req.user.id }).sort('-voteDate').exec(function (err, votes) {
       if (err) {
         return next(err);
       }
       res.send(votes);
     });
   })
- /* });*/
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 /**
@@ -382,39 +361,6 @@ router.post('/login', function (req, res, next) {
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-
-//     -----------------------------
-//     // Apply skip and limit to select the correct page of elements
-//     query = query.skip((page - 1) * pageSize).limit(pageSize);
-
-//   // Parse query parameters and apply pagination here...
-//   query.exec(function (err, benches) {
-//     if (err) { return next(err); }
-//     // Send JSON envelope with data
-//     res.send({
-//       page: page,
-//       pageSize: pageSize,
-//       total: total,
-//       data: benches
-//     });
-//   });
-//   // });
-//   User.find().sort('username').exec(function (err, users) {
-//     if (err) {
-//       return next(err);
-//     }
-//     res.send(users);
-//   });
-// });
-// -----------------------------
-
-
-
-
-
-module.exports = router;
-
-///////////////////////////////////////////////////////////////////////////////////////////
 /**
  * @api {delete} /api/users/:id Delete a user
  * @apiName DeleteUser
@@ -431,7 +377,6 @@ module.exports = router;
  * @apiSuccessExample 204 No Content
  *     HTTP/1.1 204 No Content
  */
-/* DELETE a user */
 router.delete('/:id', authenticate, function (req, res, next) {
   const id = req.params.id;
   User.deleteOne({ _id: id }, function (err, deleteUser) {
@@ -441,7 +386,6 @@ router.delete('/:id', authenticate, function (req, res, next) {
     res.send(`User ${id} has been deleted ;)`)
   });
 });
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 /**
@@ -475,7 +419,6 @@ router.delete('/:id', authenticate, function (req, res, next) {
  *       "password": "$2a$07$YQI9k8fqscj5dawrlLquaON2/C66ZaNIXL4kAA922my/dAB7xNHru"
  *     }
  */
-/* PATCH a user */
 router.patch('/:id', authenticate, loadUserFromParamsMiddleware, function (req, res, next) {
   const plainPassword = req.body.password;
   const saltRounds = 10;
@@ -495,7 +438,8 @@ router.patch('/:id', authenticate, loadUserFromParamsMiddleware, function (req, 
   });
 });
 
-///////// 
+///////////////////////////////////////////////////////////////////////////////////////////
+
 function loadUserFromParamsMiddleware(req, res, next) {
 
   const userId = req.params.id;
@@ -516,13 +460,13 @@ function loadUserFromParamsMiddleware(req, res, next) {
     next();
   });
 }
+///////////////////////////////////////////////////////////////////////////////////////////
+
 function userNotFound(res, userId) {
   return res.status(404).type('text').send(`No user found with ID ${userId}`);
 }
 
-module.exports = router;
 ///////////////////////////////////////////////////////////////////////////////////////////
-
 /**
  * @apiDefine UserInRequestBody
  * @apiParam (Request body) {String{3..50}} username The name of the user (unique)
@@ -583,3 +527,5 @@ module.exports = router;
  *       }
  *     }
  */
+
+module.exports = router;
