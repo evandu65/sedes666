@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const debug = require('debug')('demo:benches');
 
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 /**
  * @api {get} /api/benches Retrieve all benches
@@ -94,6 +95,7 @@ router.get('/', function (req, res, next) {
     // Parse query parameters and apply pagination here...
     query.exec(function (err, benches) {
       if (err) { return next(err); }
+     
       // Send JSON envelope with data
       res.send({
         page: page,

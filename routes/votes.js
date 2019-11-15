@@ -4,6 +4,7 @@ const Vote = require('../models/vote');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const debug = require('debug')('demo:votes');
+const {publishRanking} = require('../dispatcher')
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 /**
@@ -169,6 +170,7 @@ router.post('/', function(req, res, next) {
       return next(err);
     }
     // Send the saved document in the response
+    publishRanking();
     res.send(savedVote);
   });
 });
