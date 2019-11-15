@@ -51,8 +51,9 @@ describe('GET /benches/:id', function () {
   beforeEach(async function () {
 
     await Promise.all([
-      User.create({_id:"5db456bc5cfb8c3690a24e9a", username: 'John Doe', password:'12344' }),
+      User.create({_id:"5db456bc5cfb8c3690a24e9a", username: 'John Doe', password:'12344' })
     ])
+
     // Create 2 benches before retrieving the list.
     await Promise.all([
       Bench.create({
