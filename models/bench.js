@@ -17,6 +17,7 @@ const benchSchema = new Schema({
 
   description: {
     type: String,
+    required: true,
     minlength: 3,
     maxlength: 50
   },
@@ -35,19 +36,25 @@ const benchSchema = new Schema({
     type: Number,
     default: 0
   },
-  backrest: Boolean,
+  backrest: {
+    type: Boolean,
+    required: true,
+  },
   material: {
     type: String,
+    required: true,
     enumm: ['Wood', 'Metal', 'Stone', 'Marble', 'Plastic']
   },
   ergonomy: {
     type: Number,
+    required: true,
     min: 0,
     max: 5,
     integer: true
   },
   seats: {
     type: Number,
+    required: true,
     min: 0,
     max: 3000,
     integer: true

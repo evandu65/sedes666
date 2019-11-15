@@ -386,7 +386,7 @@ module.exports = router;
  * @apiDefine BenchInRequestBody
  * @apiParam (Request body) {String{3..50}} description The description of the bench 
  * @apiParam (Request body) {Boolean{0..1}} backrest The backrest parameter (0 = No|1 = Yes)
- * @apiParam (Request body) {String{0..50}} material The material of the bench (Wood,Metal,Stone,Marble,Plastic)
+ * @apiParam (Request body) {String{Wood, Metal, Stone, Marble, Plastic}} material The material of the bench (Wood,Metal,Stone,Marble,Plastic)
  * @apiParam (Request body) {Number{0..5}} ergonomy The ergonomy mark of the bench
  * @apiParam (Request body) {Number{0..3000}} seats The number of seats on the bench
  * @apiParam (Request body) {String{0..50}} image The image of the bench
