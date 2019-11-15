@@ -25,10 +25,11 @@ describe('POST /benches', function () {
         location: {
           type: "Point",
           coordinates: [-73.856077, 40.848447]
-        }
+        },
       })
       .expect(200)
       .expect('Content-Type', /json/);
+      
 
     // Check that the response body is a JSON object with exactly the properties we expect.
     expect(res.body).to.be.an('object');
@@ -40,6 +41,8 @@ describe('POST /benches', function () {
     expect(res.body.image).to.be.a('string');
     expect(res.body.location.type).to.equal('Point');
     expect(res.body.location.coordinates).to.be.a('array');
+    expect(res.body.location.coordinates[0]).to.be.a('number');
+    expect(res.body.location.coordinates[1]).to.be.a('number');
     expect(res.body).to.have.all.keys('_id', 'description', 'backrest', '__v', 'creationDate', 'ergonomy', 'image', 'location', 'material', 'modifDate', 'score', 'seats');
   });
 });
@@ -85,6 +88,8 @@ describe('GET /benches/:id', function () {
     expect(res.body.image).to.be.a('string');
     expect(res.body.location.type).to.equal('Point');
     expect(res.body.location.coordinates).to.be.a('array');
+    expect(res.body.location.coordinates[0]).to.be.a('number');
+    expect(res.body.location.coordinates[1]).to.be.a('number');
     expect(res.body).to.have.all.keys('_id', 'description', 'backrest', '__v', 'creationDate', 'ergonomy', 'image', 'location', 'material', 'modifDate', 'score', 'seats', 'userId');
 
   });

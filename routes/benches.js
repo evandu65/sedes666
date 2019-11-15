@@ -9,6 +9,7 @@ const debug = require('debug')('demo:benches');
 const jwt = require('jsonwebtoken');
 const secretKey = process.env.SECRET_KEY || 'changeme';
 
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 // AUTHENTICATION
 function authenticate(req, res, next) {
@@ -120,6 +121,7 @@ router.get('/',authenticate, function (req, res, next) {
     // Parse query parameters and apply pagination here...
     query.exec(function (err, benches) {
       if (err) { return next(err); }
+     
       // Send JSON envelope with data
       res.send({
         page: page,

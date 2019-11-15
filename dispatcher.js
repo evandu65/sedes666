@@ -4,23 +4,24 @@ try {
   console.log('No .env file loaded');
 }
 
+const namespace = process.env.NAMESPACE || 'com.sedes';
+const Bench = require('./models/bench');
+
+
+
+
 let currentSession;
 
-function updateRanking(){
-
-    return console.log("Classement mis à jour");
-}
-
-exports.publishRanking = function(){
-
-    connection.onopen = function(session) {
-        session.subscribe(`${namespace}.publishRanking`,updateRanking())
 
 
-    };
+getRanking = 
 
-    connection.open();
-    
+exports.publishRanking = function(params){
+
+  if (currentSession) {
+    currentSession.publish(`${namespace}.updateRanking`, console.log("vote créé"));
+  }
+  
 }
 
 exports.createBackendDispatcher = function() {
@@ -30,7 +31,7 @@ exports.createBackendDispatcher = function() {
       /**¨
       * Get namespace
       */
-      const namespace = process.env.NAMESPACE || 'com.sedes';
+      
       const secret = process.env.SECRET || '';
     
       // backend's communications with Web Application Messaging Protocol (WAMP)
@@ -49,8 +50,11 @@ exports.createBackendDispatcher = function() {
         connection.onopen = function(session) {
             currentSession = session;
           console.log('Connection to WAMP router established');
+        
+          session.register(`${namespace}.updateRanking`, function(arg,params){
+            return params;
+          })
           
-          session.register(`${namespace}.updateRanking`, () => updateRanking());
     
     
         };
