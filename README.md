@@ -1,4 +1,5 @@
 [logo]: https://github.com/evandu65/sedes666/blob/master/docs/img/sedes-logo.png "SEDES"
+![alt text](https://github.com/evandu65/sedes666/blob/master/docs/img/sedes-logo.png "Logo Title Text 1")
 # sedes666 - quae sedes in solio 
 
 A demonstration RESTful API implemented with [Express][express].
