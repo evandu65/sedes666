@@ -5,13 +5,17 @@ const mongoose = require('mongoose');
 const app = require('../app');
 const { cleanUpDatabaseUser } = require('./utils');
 const User = require('../models/user');
+const authenticate = require('../middlewares/auth')
+
+let auth = {};
+beforeEach(loginUser(auth));
 
 beforeEach(cleanUpDatabaseUser);
 
 describe('POST /users', function () {
 
 
-  it('should create a user', async function () {
+  it('should create a user',  async function () {
     const res = await supertest(app)
       .post('/users')
       .send({
@@ -29,13 +33,37 @@ describe('POST /users', function () {
   });
 });
 
+
+
+ function loginUser(auth) {
+  return function(done) {
+    supertest(app)
+          .post('/users/login')
+          .send({
+            username: 'John Doe', 
+            password:'1234'
+          })
+          .expect(200)
+          .end(onResponse);
+
+      function onResponse(err, res) {
+          auth.token = res.body.token;
+          console.log(auth.token)
+          return done();
+      }
+  };
+}
+
 describe('GET /users/:id', function () {
   beforeEach(async function () {
-    // Create 2 users before retrieving the list.
+    // Create 1 user before retrieving the list.
     await Promise.all([
-      User.create({_id:"5db456bc5cfb8c3690a24e9a", username: 'John Doe', password:'12344' }),
+      User.create({_id:"5db456bc5cfb8c3690a24e9a", username: 'John Doe', password:'1234' }),
+
     ]);
   });
+
+
 
   it('should retrieve one user', async function () {
     const res = await supertest(app)

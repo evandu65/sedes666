@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const secretKey = process.env.SECRET_KEY || 'changeme';
+const jwt = require('jsonwebtoken');
 
 function authenticate(req, res, next) {
   // Ensure the header is present.
@@ -23,3 +24,5 @@ function authenticate(req, res, next) {
     }
   });
 }
+
+module.exports = authenticate
