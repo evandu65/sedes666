@@ -1,3 +1,4 @@
+///////////////////////////////////////////////////////////////////////////////////////////
 var express = require('express');
 var router = express.Router();
 const Bench = require('../models/bench');
@@ -5,8 +6,34 @@ const Vote = require('../models/vote');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const debug = require('debug')('demo:benches');
+const jwt = require('jsonwebtoken');
+const secretKey = process.env.SECRET_KEY || 'changeme';
 
 
+///////////////////////////////////////////////////////////////////////////////////////////
+// AUTHENTICATION
+function authenticate(req, res, next) {
+  // Ensure the header is present.
+  const authorization = req.get('Authorization');
+  if (!authorization) {
+    return res.status(401).send('Authorization header is missing');
+  }
+  // Check that the header has the correct format.
+  const match = authorization.match(/^Bearer (.+)$/);
+  if (!match) {
+    return res.status(401).send('Authorization header is not a bearer token');
+  }
+  // Extract and verify the JWT.
+  const token = match[1];
+  jwt.verify(token, secretKey, function(err, payload) {
+    if (err) {
+      return res.status(401).send('Your token is invalid or has expired');
+    } else {
+      req.currentUserId = payload.sub;
+      next(); // Pass the ID of the authenticated user to the next middleware.
+    }
+  });
+}
 ///////////////////////////////////////////////////////////////////////////////////////////
 /**
  * @api {get} /api/benches Retrieve all benches
@@ -64,8 +91,7 @@ const debug = require('debug')('demo:benches');
  *     }
  *     ]
  */
-/* GET benches listing. */
-router.get('/', function (req, res, next) {
+router.get('/',authenticate, function (req, res, next) {
   // Parse the "page" param (default to 1 if invalid)
   let page = parseInt(req.query.page, 10);
   if (isNaN(page) || page < 1) {
@@ -145,8 +171,7 @@ router.get('/', function (req, res, next) {
  *       "__v":0
  *     }
  */
-
-router.get('/:id', loadBenchFromParamsMiddleware, function (req, res, next) {
+router.get('/:id',authenticate, loadBenchFromParamsMiddleware, function (req, res, next) {
   res.send(req.bench);
 });
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -184,7 +209,7 @@ router.get('/:id', loadBenchFromParamsMiddleware, function (req, res, next) {
  *        "__v":0
  *        }
  */
-router.get('/:id/votes', loadBenchFromParamsMiddleware, function (req, res, next) {
+router.get('/:id/votes',authenticate, loadBenchFromParamsMiddleware, function (req, res, next) {
       Vote.find({ benchId: req.bench.id }).sort('-voteDate').exec(function (err, votes) {
         if (err) {
           return next(err);
@@ -193,7 +218,7 @@ router.get('/:id/votes', loadBenchFromParamsMiddleware, function (req, res, next
       });
     
     })  
-    
+///////////////////////////////////////////////////////////////////////////////////////////    
 /**
  * @api {post} /api/benches Create a bench
  * @apiName CreateBench
@@ -245,7 +270,7 @@ router.get('/:id/votes', loadBenchFromParamsMiddleware, function (req, res, next
  *       "__v":0
  *     }
  */
-router.post('/', function (req, res, next) {
+router.post('/',authenticate, function (req, res, next) {
   // Create a new document from the JSON in the request body
   const newBench = new Bench(req.body);
   // Save that document
@@ -274,7 +299,7 @@ router.post('/', function (req, res, next) {
  * @apiSuccessExample 204 No Content
  *     HTTP/1.1 204 No Content
  */
-router.delete('/:id', function (req, res, next) {
+router.delete('/:id',authenticate, function (req, res, next) {
   const id = req.params.id;
   Bench.deleteOne({ _id: id }, function (err, deleteBench) {
     if (err) {
@@ -283,7 +308,6 @@ router.delete('/:id', function (req, res, next) {
     res.send(`bench ${id} has been deleted ;)`)
   });
 });
-/* */
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 /**
@@ -330,8 +354,7 @@ router.delete('/:id', function (req, res, next) {
  *       "__v":0
  *     }
  */
-/* PATCH a bench */
-router.patch('/:id', loadBenchFromParamsMiddleware, function (req, res, next) {
+router.patch('/:id',authenticate, loadBenchFromParamsMiddleware, function (req, res, next) {
   // Update only properties present in the request body
   if (req.body.score !== undefined) {
     req.bench.score = req.body.score;
@@ -356,8 +379,8 @@ router.patch('/:id', loadBenchFromParamsMiddleware, function (req, res, next) {
     res.send(savedBench);
   });
 });
-/************************/
-/* Middle ware verification */
+
+///////////////////////////////////////////////////////////////////////////////////////////
 function loadBenchFromParamsMiddleware(req, res, next) {
 
   const benchId = req.params.id;
@@ -378,43 +401,39 @@ function loadBenchFromParamsMiddleware(req, res, next) {
     next();
   });
 }
+///////////////////////////////////////////////////////////////////////////////////////////
 function benchNotFound(res, benchId) {
   return res.status(404).type('text').send(`No bench found with ID ${benchId}`);
 }
 
-module.exports = router;
-
+///////////////////////////////////////////////////////////////////////////////////////////
 /**
  * @apiDefine BenchInRequestBody
  * @apiParam (Request body) {String{3..50}} description The description of the bench 
- * @apiParam (Request body) {Boolean{0..1}} backrest The backrest parameter (0 = No|1 = Yes)
+ * @apiParam (Request body) {Boolean{Boolean{[0 = false = no | 1 = true = yes]}} backrest The backrest parameter
  * @apiParam (Request body) {String{0..50}} material The material of the bench (Wood,Metal,Stone,Marble,Plastic)
  * @apiParam (Request body) {Number{0..5}} ergonomy The ergonomy mark of the bench
  * @apiParam (Request body) {Number{0..3000}} seats The number of seats on the bench
  * @apiParam (Request body) {String{0..50}} image The image of the bench
  * @apiParam (Request body) {Array} location Location array
- * @apiParam (Request body) {String{0..50}} location.type Geometrical type 
- * @apiParam (Request body) {Number{-180..180}} location.coordinates The longitude and latitude of the bench
+ * @apiParam (Request body) {Number{[-180..180,-90..90]}} location.coordinates The longitude and latitude of the bench
  */
 
 /**
  * @apiDefine BenchInResponseBody
- * @apiSuccess (Response body) {String} id The unique identifier of the bench
+ * @apiSuccess (Response body) {String} id The unique identifier of the bench (generated by mongo)
  * @apiSuccess (Response body) {String} userId The unique identifier of the user which create de bench 
  * @apiSuccess (Response body) {String} description The description of the bench 
- * @apiSuccess (Response body) {String} creationDate The registration date of the bench
- * @apiSuccess (Response body) {String} modificationDate The last modification date of the bench
- * @apiSuccess (Response body) {Number} score The bench's score
+ * @apiSuccess (Response body) {String} creationDate The registration date of the bench (default)
+ * @apiSuccess (Response body) {String} modificationDate The last modification date of the bench (default)
  * @apiSuccess (Response body) {Number} score The score of the bench (0 by default)
  * @apiSuccess (Response body) {String} material The material of the bench (Wood,Metal,Stone,Marble,Plastic)
  * @apiSuccess (Response body) {Number} ergonomy The ergonomy mark of the bench
  * @apiSuccess (Response body) {Boolean} backrest The backrest parameters
  * @apiSuccess (Response body) {Number} seats The number of seats on the bench
- * @apiSuccess (Response body) {String} registrationDate The registration date of the user
  * @apiSuccess (Response body) {Array} location Location array
  * @apiSuccess (Response body) {Array} location.type Location type array
- * @apiSuccess (Response body) {Array} location Location type
- * @apiSuccess (Response body) {String} location.type Geometrical type 
+ * @apiSuccess (Response body) {String} location.type.type Geometrical type (default)
  * @apiSuccess (Response body) {Number} location.coordinates The longitude and latitude of the bench
  */
 
@@ -465,3 +484,4 @@ module.exports = router;
  *     }
  */
 
+module.exports = router;
