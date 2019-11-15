@@ -267,7 +267,7 @@ pre code.sample-request-response-json {
 }
 
 .sidenav-search{
-  background-color : #e5c500;
+  background-color : #e5c500 !important;
 }
 
 .sidenav > li > a {
