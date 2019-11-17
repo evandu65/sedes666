@@ -66,10 +66,10 @@ router.get('/', function (req, res, next) {
         as: 'countBench'
       }
     },
-    { 
+    {
       $unwind: {
         path: '$countBench',
-        // Preserve people who have not directed any movie
+        // Preserve people who have not repertoried any bench
         // ("countBench" will be null).
         preserveNullAndEmptyArrays: true
       }
@@ -166,7 +166,71 @@ router.get('/', function (req, res, next) {
  *        }
  */
 router.get('/:id', loadUserFromParamsMiddleware, function (req, res, next) {
-  res.send(req.user);
+  const id = req.user._id;
+
+  User.aggregate([
+    {
+      //équivalent inner join
+      $lookup: {
+        from: 'benches',
+        localField: '_id',
+        foreignField: 'userId',
+        as: 'countBench'
+      }
+    },
+    {
+      $unwind: {
+        path: '$countBench',
+        // Preserve people who have not repertoried any bench
+        // ("countBench" will be null).
+        preserveNullAndEmptyArrays: true
+      }
+    },
+    // Replace "countBench" by 1 when set, or by 0 when null.
+    {
+      $addFields: {
+        countBench: {
+          $cond: {
+            if: '$countBench',
+            then: 1,
+            else: 0
+          }
+        }
+      }
+    },
+    {
+      //format de sortie
+      $group: {
+        _id: '$_id',
+        username: { "$first": '$username' },
+        password: { "$first": '$password' },
+        // Sum the 1s and 0s in the "countBench" property
+        // to obtain the final count.
+        countBench: { $sum: '$countBench' },
+      }
+    },
+    {
+      $match : { _id : id }
+    }
+  ],
+    (err, userSort) => {
+      if (err) {
+        return next(err);
+      }
+      User.find().count(function (err, total) {
+        if (err) {
+          return next(err);
+        }
+        let UserSerialized = userSort.map(user => {
+          const serialized = new User(user).toJSON();
+          serialized.countBench = user.countBench;
+          return serialized;
+        });
+
+        res.send(UserSerialized);
+
+      });
+    });
 });
 ///////////////////////////////////////////////////////////////////////////////////////////
 /**
@@ -204,33 +268,42 @@ router.get('/:id', loadUserFromParamsMiddleware, function (req, res, next) {
  *        }
  */
 router.get('/:id/votes', loadUserFromParamsMiddleware, function (req, res, next) {
-  
-  // Count total votes matching the URL query parameters
- /* const countQuery = req;
-  Vote.count(function (err, total) {
+
+  // Parse the "page" param (default to 1 if invalid)
+  let page = parseInt(req.query.page, 10);
+  if (isNaN(page) || page < 1) {
+    page = 1;
+  }
+  // Parse the "pageSize" param (default to 100 if invalid)
+  let pageSize = parseInt(req.query.pageSize, 10);
+  if (isNaN(pageSize) || pageSize < 0 || pageSize > 100) {
+    pageSize = 10;
+  }
+
+  Vote.find({ userId: req.user.id }).sort('-voteDate').exec(function (err, total) {
     if (err) {
       return next(err);
     }
+    let query = Vote.find();
 
-    // Prepare the initial database query from the URL query parameters
-    let query = queryVotes(req);
 
-    // Parse pagination parameters from URL query parameters
-    const { page, pageSize } = utils.getPaginationParameters(req);
-
-    // Apply the pagination to the database query
+    // Apply skip and limit to select the correct page of elements
     query = query.skip((page - 1) * pageSize).limit(pageSize);
 
-    // Add the Link header to the response
-    utils.addLinkHeader('/api/users/:id/votes', page, pageSize, total, res);*/
-    Vote.find({ userId: req.user.id }).sort('-voteDate').exec(function (err, votes) {
-      if (err) {
-        return next(err);
-      }
-      res.send(votes);
+    // Parse query parameters and apply pagination here...
+    query.exec(function (err, votes) {
+      if (err) { return next(err); }
+      // Send JSON envelope with data
+      res.send({
+        page: page,
+        pageSize: pageSize,
+        total: total,
+        data: votes
+      });
     });
-  })
- /* });*/
+  });
+})
+/* });*/
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -335,34 +408,6 @@ router.post('/login', function (req, res, next) {
     }
   });
 });
-
-///////////////////////////////////////////////////////////////////////////////////////////
-
-//     -----------------------------
-//     // Apply skip and limit to select the correct page of elements
-//     query = query.skip((page - 1) * pageSize).limit(pageSize);
-
-//   // Parse query parameters and apply pagination here...
-//   query.exec(function (err, benches) {
-//     if (err) { return next(err); }
-//     // Send JSON envelope with data
-//     res.send({
-//       page: page,
-//       pageSize: pageSize,
-//       total: total,
-//       data: benches
-//     });
-//   });
-//   // });
-//   User.find().sort('username').exec(function (err, users) {
-//     if (err) {
-//       return next(err);
-//     }
-//     res.send(users);
-//   });
-// });
-// -----------------------------
-
 
 /* POST new user */
 router.post('/', function (req, res, next) {
@@ -544,22 +589,22 @@ module.exports = router;
  * @apiSuccess (Response body) {String} registrationDate The registration date of the user
  */
 
- /**
- * @apiDefine UserNotFoundError
- *
- * @apiError {Object} 404/NotFound No user was found corresponding to the ID in the URL path
- *
- * @apiErrorExample {json} 404 Not Found
- *     HTTP/1.1 404 Not Found
- *     Content-Type: text/plain
- *
- *     No person found with ID 58b2926f5e1def0123e97281
- */
+/**
+* @apiDefine UserNotFoundError
+*
+* @apiError {Object} 404/NotFound No user was found corresponding to the ID in the URL path
+*
+* @apiErrorExample {json} 404 Not Found
+*     HTTP/1.1 404 Not Found
+*     Content-Type: text/plain
+*
+*     No person found with ID 58b2926f5e1def0123e97281
+*/
 
- /**
- * @apiDefine UserIdInUrlPath
- * @apiParam (URL path parameters) {String} id The unique identifier of the user to retrieve
- */
+/**
+* @apiDefine UserIdInUrlPath
+* @apiParam (URL path parameters) {String} id The unique identifier of the user to retrieve
+*/
 
 /**
  * @apiDefine UserValidationError

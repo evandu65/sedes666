@@ -3,10 +3,11 @@ const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
 const voteSchema = new Schema({
     type: Boolean,
+    // Default value
     voteDate: {
       type: Date,
       default: Date.now 
-    }, // Default value
+    }, 
     userId: {
       type: Schema.Types.ObjectId,
       required:true,
