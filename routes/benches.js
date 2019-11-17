@@ -67,7 +67,7 @@ const secretKey = process.env.SECRET_KEY || 'changeme';
  *     }
  *     ]
  */
-router.get('/',authenticate, function (req, res, next) {
+router.get('/', authenticate, function (req, res, next) {
   // Parse the "page" param (default to 1 if invalid)
   let page = parseInt(req.query.page, 10);
   if (isNaN(page) || page < 1) {
@@ -79,35 +79,118 @@ router.get('/',authenticate, function (req, res, next) {
     pageSize = 10;
   }
 
-  Bench.find().sort('score').count(function (err, total) {
-    if (err) {
-      return next(err);
-    };
-
-    let query = Bench.find();
-
-    // Limit benches to only those with a good enough score
-    if (!isNaN(req.query.ratedAtLeast)) {
-      query = query.where('score').gte(req.query.ratedAtLeast);
+  Bench.aggregate([
+    {
+      //équivalent inner join
+      $lookup: {
+        from: 'votes',
+        localField: '_id',
+        foreignField: 'benchId',
+        as: 'score'
+      }
+    },
+    {
+      $unwind: {
+        path: '$score',
+        // Preserve benches who have not any vote
+        // ("score" will be null).
+        preserveNullAndEmptyArrays: true
+      }
+    },
+    // Replace "score" by 1 when set, or by 0 when null.
+    {
+      $addFields: {
+        score: {
+          $cond: {
+            if: '$score',
+            then: 1,
+            else: 0
+          }
+        }
+      }
+    },
+    {
+      //format de sortie
+      $group: {
+        _id: '$_id',
+        userId: { "$first": '$userId' },
+        description: { "$first": '$description' },
+        // Sum the 1s and 0s in the "score" property
+        // to obtain the final count.
+        score: { $sum: '$score' },
+        backrest: { "$first": '$backrest' },
+        material: { "$first": '$material' },
+        ergonomy: { "$first": '$ergonomy' },
+        seats: { "$first": '$seats' },
+        image: { "$first": '$image' },
+        location: { "$first": '$location' },
+      }
+    },
+    {
+      $sort: {
+        score: -1
+      }
+    },
+    {
+      $skip: (page - 1) * pageSize
+    },
+    {
+      $limit: pageSize
     }
+  ],
+    (err, benchSort) => {
+      if (err) {
+        return next(err);
+      }
+      Bench.find().count(function (err, total) {
+        if (err) {
+          return next(err);
+        }
+        let BenchSerialized = benchSort.map(bench => {
 
-    // Apply skip and limit to select the correct page of elements
-    query = query.skip((page - 1) * pageSize).limit(pageSize);
+          const serialized = new Bench(bench).toJSON();
 
-    // Parse query parameters and apply pagination here...
-    query.exec(function (err, benches) {
-      if (err) { return next(err); }
-     
-      // Send JSON envelope with data
-      res.send({
-        page: page,
-        pageSize: pageSize,
-        total: total,
-        data: benches
+          serialized.score = bench.score;
+
+          return serialized;
+        });
+
+        // Limit benches to only those with a good enough score
+        if (!isNaN(req.query.ratedAtLeast)) {
+          BenchSerialized = BenchSerialized.filter(bench => bench.score > req.query.ratedAtLeast);
+          total = BenchSerialized.length;
+          res.send(
+            {
+              page: page,
+              pageSize: pageSize,
+              total: total,
+              data: BenchSerialized
+            });
+        } else {
+          res.send(
+            {
+              page: page,
+              pageSize: pageSize,
+              total: total,
+              data: BenchSerialized
+            });
+        }
       });
     });
-  });
 });
+
+// Bench.find().sort('score').count(function (err, total) {
+//   if (err) {
+//     return next(err);
+//   };
+
+//   let query = Bench.find();
+
+//   // Limit benches to only those with a good enough score
+//   if (!isNaN(req.query.ratedAtLeast)) {
+//     query = query.where('score').gte(req.query.ratedAtLeast);
+//   }
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -147,8 +230,78 @@ router.get('/',authenticate, function (req, res, next) {
  *       "__v":0
  *     }
  */
-router.get('/:id',authenticate, loadBenchFromParamsMiddleware, function (req, res, next) {
-  res.send(req.bench);
+router.get('/:id', authenticate, loadBenchFromParamsMiddleware, function (req, res, next) {
+  const id = req.bench._id;
+  console.log(req.bench._id);
+
+  Bench.aggregate([
+    {
+      //équivalent inner join
+      $lookup: {
+        from: 'votes',
+        localField: '_id',
+        foreignField: 'benchId',
+        as: 'score'
+      }
+    },
+    {
+      $unwind: {
+        path: '$score',
+        // Preserve benches who have not any vote
+        // ("score" will be null).
+        preserveNullAndEmptyArrays: true
+      }
+    },
+    // Replace "score" by 1 when set, or by 0 when null.
+    {
+      $addFields: {
+        score: {
+          $cond: {
+            if: '$score',
+            then: 1,
+            else: 0
+          }
+        }
+      }
+    },
+    {
+      //format de sortie
+      $group: {
+        _id: '$_id',
+        userId: { "$first": '$userId' },
+        description: { "$first": '$description' },
+        // Sum the 1s and 0s in the "score" property
+        // to obtain the final count.
+        score: { $sum: '$score' },
+        backrest: { "$first": '$backrest' },
+        material: { "$first": '$material' },
+        ergonomy: { "$first": '$ergonomy' },
+        seats: { "$first": '$seats' },
+        image: { "$first": '$image' },
+        location: { "$first": '$location' },
+      }
+    },
+    {
+      $match: { _id: id }
+    }
+  ],
+    (err, benchSort) => {
+      if (err) {
+        return next(err);
+      }
+      Bench.find().count(function (err, total) {
+        if (err) {
+          return next(err);
+        }
+        let BenchSerialized = benchSort.map(bench => {
+          const serialized = new Bench(bench).toJSON();
+          serialized.score = bench.score;
+          return serialized;
+        });
+
+        res.send(BenchSerialized);
+      });
+    });
 });
 ///////////////////////////////////////////////////////////////////////////////////////////
 /**
@@ -185,15 +338,41 @@ router.get('/:id',authenticate, loadBenchFromParamsMiddleware, function (req, re
  *        "__v":0
  *        }
  */
-router.get('/:id/votes',authenticate, loadBenchFromParamsMiddleware, function (req, res, next) {
-      Vote.find({ benchId: req.bench.id }).sort('-voteDate').exec(function (err, votes) {
-        if (err) {
-          return next(err);
-        }
-        res.send(votes);
+router.get('/:id/votes', authenticate, loadBenchFromParamsMiddleware, function (req, res, next) {
+  // Parse the "page" param (default to 1 if invalid)
+  let page = parseInt(req.query.page, 10);
+  if (isNaN(page) || page < 1) {
+    page = 1;
+  }
+  // Parse the "pageSize" param (default to 100 if invalid)
+  let pageSize = parseInt(req.query.pageSize, 10);
+  if (isNaN(pageSize) || pageSize < 0 || pageSize > 100) {
+    pageSize = 10;
+  }
+  
+  Vote.find({ benchId: req.bench.id }).sort('-voteDate').exec(function (err, total) {
+    if (err) {
+      return next(err);
+    }
+    let query = Vote.find();
+
+    // Apply skip and limit to select the correct page of elements
+    query = query.skip((page - 1) * pageSize).limit(pageSize);
+
+    // Parse query parameters and apply pagination here...
+    query.exec(function (err, votes) {
+      if (err) { return next(err); }
+      // Send JSON envelope with data
+      res.send({
+        page: page,
+        pageSize: pageSize,
+        total: total,
+        data: votes
       });
-    
-    })  
+    });
+  });
+
+})
 ///////////////////////////////////////////////////////////////////////////////////////////    
 /**
  * @api {post} /api/benches Create a bench
@@ -246,7 +425,7 @@ router.get('/:id/votes',authenticate, loadBenchFromParamsMiddleware, function (r
  *       "__v":0
  *     }
  */
-router.post('/',authenticate, function (req, res, next) {
+router.post('/', authenticate, function (req, res, next) {
   // Create a new document from the JSON in the request body
   const newBench = new Bench(req.body);
   // Save that document
@@ -275,7 +454,7 @@ router.post('/',authenticate, function (req, res, next) {
  * @apiSuccessExample 204 No Content
  *     HTTP/1.1 204 No Content
  */
-router.delete('/:id',authenticate, function (req, res, next) {
+router.delete('/:id', authenticate, function (req, res, next) {
   const id = req.params.id;
   Bench.deleteOne({ _id: id }, function (err, deleteBench) {
     if (err) {
@@ -330,7 +509,7 @@ router.delete('/:id',authenticate, function (req, res, next) {
  *       "__v":0
  *     }
  */
-router.patch('/:id',authenticate, loadBenchFromParamsMiddleware, function (req, res, next) {
+router.patch('/:id', authenticate, loadBenchFromParamsMiddleware, function (req, res, next) {
   // Update only properties present in the request body
   if (req.body.score !== undefined) {
     req.bench.score = req.body.score;
@@ -430,10 +609,10 @@ function benchNotFound(res, benchId) {
  *     No bench found with ID 5db6f9a2070b2c0017c06b77
  */
 
- /**
- * @apiDefine BenchIdInUrlPath
- * @apiParam (URL path parameters) {String} id The unique identifier of the bench to retrieve
- */
+/**
+* @apiDefine BenchIdInUrlPath
+* @apiParam (URL path parameters) {String} id The unique identifier of the bench to retrieve
+*/
 
 /**
  * @apiDefine BenchValidationError
