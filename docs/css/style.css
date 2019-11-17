@@ -10,6 +10,7 @@ body, p, a, div, th, td {
   font-family: "Source Sans Pro", sans-serif;
   font-weight: 400;
   font-size: 16px;
+  background-color : #e5c500
 }
 
 td.code {
@@ -26,7 +27,7 @@ td.code {
 }
 
 p {
-  color: #808080;
+  color: #000000;
 }
 
 h1 {
@@ -48,7 +49,7 @@ h2 {
 }
 
 section {
-  border-top: 1px solid #ebebeb;
+  border-top: 1px solid #000;
   padding: 30px 0;
 }
 
@@ -258,8 +259,15 @@ pre code.sample-request-response-json {
   bottom: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  background-color: #f5f5f5;
+  background-color: #e5c500;
   z-index: 10;
+}
+.sidenav > li.nav-header > a {
+  background-color : #e5c500 !important;
+}
+
+.sidenav-search{
+  background-color : #e5c500 !important;
 }
 
 .sidenav > li > a {
@@ -293,7 +301,7 @@ pre code.sample-request-response-json {
 .sidenav > li.active > a {
     position: relative;
     z-index: 2;
-    background-color: #0088cc;
+    background-color: #000;
     color: #ffffff;
 }
 
@@ -517,6 +525,14 @@ tr.del td {
  * ------------------------------------------------------------------------------------------ */
 ul.nav-tabs {
   margin: 0;
+}
+
+.nav-tabs{
+  border : #000; 
+}
+
+.nav-tabs>li.active>a{
+  background-color : #000;
 }
 
 p.deprecated span{

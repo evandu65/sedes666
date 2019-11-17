@@ -1,6 +1,8 @@
 const { expect } = require('chai');
 const supertest = require('supertest');
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
+const secretKey = process.env.SECRET_KEY || 'changeme';
 
 const app = require('../app');
 const { cleanUpDatabaseBench } = require('./utils');
@@ -11,10 +13,26 @@ beforeEach(cleanUpDatabaseBench);
 
 describe('POST /benches', function () {
 
+  beforeEach(async function () {
+
+    await Promise.all([
+      User.create({_id:"5db6f7c758696c3c6c772c31", username: 'Jane Doe', password:'12344' })
+    ])
+
+  }),
+
 
   it('should create a bench', async function () {
+
+    const user = await User.create({_id:"5db456bc5cfb8c3690a24e9a", username: 'John Doe', password:'1234' })
+
+  const exp = (new Date().getTime() + 7 * 24 * 3600 * 1000) / 1000;
+  const claims = { sub: user._id.toString(), exp: exp };
+  const token = jwt.sign(claims, secretKey)
+
     const res = await supertest(app)
       .post('/benches')
+      .set('Authorization', 'Bearer ' + token)
       .send({
         description: "c'est un joli banc qui surplombe le paysage valaisan",
         backrest: 0,
@@ -25,10 +43,12 @@ describe('POST /benches', function () {
         location: {
           type: "Point",
           coordinates: [-73.856077, 40.848447]
-        }
+        },
+        userId:"5db6f7c758696c3c6c772c31"
       })
       .expect(200)
       .expect('Content-Type', /json/);
+      
 
     // Check that the response body is a JSON object with exactly the properties we expect.
     expect(res.body).to.be.an('object');
@@ -40,16 +60,20 @@ describe('POST /benches', function () {
     expect(res.body.image).to.be.a('string');
     expect(res.body.location.type).to.equal('Point');
     expect(res.body.location.coordinates).to.be.a('array');
-    expect(res.body).to.have.all.keys('_id', 'description', 'backrest', '__v', 'creationDate', 'ergonomy', 'image', 'location', 'material', 'modifDate', 'score', 'seats');
-  });
+    expect(res.body.location.coordinates[0]).to.be.a('number');
+    expect(res.body.location.coordinates[1]).to.be.a('number');
+    expect(res.body).to.have.all.keys('_id', 'description', 'backrest', '__v', 'creationDate', 'ergonomy', 'image', 'location', 'material', 'modifDate', 'score', 'seats', 'userId');
+  })
 });
+
 
 describe('GET /benches/:id', function () {
   beforeEach(async function () {
 
     await Promise.all([
-      User.create({_id:"5db456bc5cfb8c3690a24e9a", username: 'John Doe', password:'12344' }),
+      User.create({_id:"5db6f7c758696c3c6c772c31", username: 'Jane Doe', password:'12344' })
     ])
+
     // Create 2 benches before retrieving the list.
     await Promise.all([
       Bench.create({
@@ -64,14 +88,21 @@ describe('GET /benches/:id', function () {
           type: "Point",
           coordinates: [-73.856077, 40.848447]
         },
-        userId:"5db456bc5cfb8c3690a24e9a"
+        userId:"5db6f7c758696c3c6c772c31"
       })
     ]);
   });
 
   it('should retrieve one bench', async function () {
+    const user = await User.create({_id:"5db456bc5cfb8c3690a24e9a", username: 'John Doe', password:'1234' })
+  
+    const exp = (new Date().getTime() + 7 * 24 * 3600 * 1000) / 1000;
+    const claims = { sub: user._id.toString(), exp: exp };
+    const token = jwt.sign(claims, secretKey)
+
     const res = await supertest(app)
       .get('/benches/5db701c8888ba23334161c7b')
+      .set('Authorization', 'Bearer ' + token)
       .expect(200)
       .expect('Content-Type', /json/)
 
@@ -85,6 +116,8 @@ describe('GET /benches/:id', function () {
     expect(res.body.image).to.be.a('string');
     expect(res.body.location.type).to.equal('Point');
     expect(res.body.location.coordinates).to.be.a('array');
+    expect(res.body.location.coordinates[0]).to.be.a('number');
+    expect(res.body.location.coordinates[1]).to.be.a('number');
     expect(res.body).to.have.all.keys('_id', 'description', 'backrest', '__v', 'creationDate', 'ergonomy', 'image', 'location', 'material', 'modifDate', 'score', 'seats', 'userId');
 
   });

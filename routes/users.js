@@ -9,6 +9,9 @@ const secretKey = process.env.SECRET_KEY || 'changeme';
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const debug = require('debug')('demo:users');
+const authenticate = require('../middlewares/auth')
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 /**
  * @api {get} /api/users Retrieve all users
@@ -44,7 +47,7 @@ const debug = require('debug')('demo:users');
  *        }
  *     ]
  */
-router.get('/', function (req, res, next) {
+router.get('/', authenticate, function (req, res, next) {
   // Parse the "page" param (default to 1 if invalid)
   let page = parseInt(req.query.page, 10);
   if (isNaN(page) || page < 1) {
@@ -165,7 +168,7 @@ router.get('/', function (req, res, next) {
  *        "__v":0
  *        }
  */
-router.get('/:id', loadUserFromParamsMiddleware, function (req, res, next) {
+router.get('/:id', authenticate, loadUserFromParamsMiddleware, function (req, res, next) {
   const id = req.user._id;
 
   User.aggregate([
@@ -210,7 +213,7 @@ router.get('/:id', loadUserFromParamsMiddleware, function (req, res, next) {
       }
     },
     {
-      $match : { _id : id }
+      $match: { _id: id }
     }
   ],
     (err, userSort) => {
@@ -267,7 +270,8 @@ router.get('/:id', loadUserFromParamsMiddleware, function (req, res, next) {
  *        "__v":0
  *        }
  */
-router.get('/:id/votes', loadUserFromParamsMiddleware, function (req, res, next) {
+
+router.get('/:id/votes', authenticate, loadUserFromParamsMiddleware, function (req, res, next) {
 
   // Parse the "page" param (default to 1 if invalid)
   let page = parseInt(req.query.page, 10);
@@ -302,8 +306,7 @@ router.get('/:id/votes', loadUserFromParamsMiddleware, function (req, res, next)
       });
     });
   });
-})
-/* });*/
+});
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -364,6 +367,7 @@ router.post('/', function (req, res, next) {
     });
   });
 });
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 /**
  * @api {post} /api/users/login Login a user
@@ -405,43 +409,6 @@ router.post('/login', function (req, res, next) {
       return next(err);
     } else if (!user) {
       return res.sendStatus(401);
-    }
-  });
-});
-
-/* POST new user */
-router.post('/', function (req, res, next) {
-  //encrypt the password
-
-  const plainPassword = req.body.password;
-  const saltRounds = 10;
-  bcrypt.hash(plainPassword, saltRounds, function (err, hashedPassword) {
-    if (err) {
-      return next(err);
-    }
-
-    // Create a new document from the JSON in the request body
-    const newUser = new User(req.body);
-    newUser.password = hashedPassword;
-    // Save that document
-    newUser.save(function (err, savedUser) {
-      if (err) {
-        return next(err);
-      }
-      // Send the saved document in the response
-      console.log(`Welcome ${savedUser.username}`);
-      res.send(savedUser);
-    });
-  });
-});
-
-/* LOGIN user */
-router.post('/login', function (req, res, next) {
-  User.findOne({ username: req.body.username }).exec(function (err, user) {
-    if (err) {
-      return next(err);
-    } else if (!user) {
-      return res.sendStatus(401);
 
     }
     bcrypt.compare(req.body.password, user.password, function (err, valid) {
@@ -464,8 +431,6 @@ router.post('/login', function (req, res, next) {
   });
 });
 
-module.exports = router;
-
 ///////////////////////////////////////////////////////////////////////////////////////////
 /**
  * @api {delete} /api/users/:id Delete a user
@@ -483,8 +448,7 @@ module.exports = router;
  * @apiSuccessExample 204 No Content
  *     HTTP/1.1 204 No Content
  */
-/* DELETE a user */
-router.delete('/:id', function (req, res, next) {
+router.delete('/:id', authenticate, function (req, res, next) {
   const id = req.params.id;
   User.deleteOne({ _id: id }, function (err, deleteUser) {
     if (err) {
@@ -493,7 +457,6 @@ router.delete('/:id', function (req, res, next) {
     res.send(`User ${id} has been deleted ;)`)
   });
 });
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 /**
@@ -527,8 +490,7 @@ router.delete('/:id', function (req, res, next) {
  *       "password": "$2a$07$YQI9k8fqscj5dawrlLquaON2/C66ZaNIXL4kAA922my/dAB7xNHru"
  *     }
  */
-/* PATCH a user */
-router.patch('/:id', loadUserFromParamsMiddleware, function (req, res, next) {
+router.patch('/:id', authenticate, loadUserFromParamsMiddleware, function (req, res, next) {
   const plainPassword = req.body.password;
   const saltRounds = 10;
   bcrypt.hash(plainPassword, saltRounds, function (err, hashedPassword) {
@@ -547,7 +509,8 @@ router.patch('/:id', loadUserFromParamsMiddleware, function (req, res, next) {
   });
 });
 
-///////// 
+///////////////////////////////////////////////////////////////////////////////////////////
+
 function loadUserFromParamsMiddleware(req, res, next) {
 
   const userId = req.params.id;
@@ -568,13 +531,13 @@ function loadUserFromParamsMiddleware(req, res, next) {
     next();
   });
 }
+///////////////////////////////////////////////////////////////////////////////////////////
+
 function userNotFound(res, userId) {
   return res.status(404).type('text').send(`No user found with ID ${userId}`);
 }
 
-module.exports = router;
 ///////////////////////////////////////////////////////////////////////////////////////////
-
 /**
  * @apiDefine UserInRequestBody
  * @apiParam (Request body) {String{3..50}} username The name of the user (unique)
@@ -583,10 +546,10 @@ module.exports = router;
 
 /**
  * @apiDefine UserInResponseBody
- * @apiSuccess (Response body) {String} id The unique identifier of the user
+ * @apiSuccess (Response body) {String} id The unique identifier of the user (generated by mongo)
  * @apiSuccess (Response body) {String} username The name of the user (unique)
  * @apiSuccess (Response body) {String} password The secret pass of the user
- * @apiSuccess (Response body) {String} registrationDate The registration date of the user
+ * @apiSuccess (Response body) {String} registrationDate The registration date of the user (default)
  */
 
 /**
@@ -635,3 +598,5 @@ module.exports = router;
  *       }
  *     }
  */
+
+module.exports = router;
