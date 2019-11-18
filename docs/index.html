@@ -41,8 +41,8 @@
 
 <script id="template-project" type="text/x-handlebars-template">
   <div class="pull-left">
-    <img src="img/sedes-logo.png" id="logo" style="height : 650px; padding-left : 25%">
-    {{#if description}}<h2>The official doc'</h2 style="align:center;">{{/if}}
+    <h1>{{name}}</h1>
+    {{#if description}}<h2>{{{nl2br description}}}</h2>{{/if}}
   </div>
   {{#if template.withCompare}}
   <div class="pull-right">

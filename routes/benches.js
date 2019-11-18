@@ -392,6 +392,7 @@ router.get('/:id/votes', authenticate, loadBenchFromParamsMiddleware, function (
  *
  *     {
  *       "description": "Nice bench with a beautiful view on the lake",
+ *       "userId" : "58b2926f5e1def0123e97281",
  *       "backrest": "0",
  *       "material": "Wood",
  *       "ergonomy": "2",
@@ -565,13 +566,9 @@ function benchNotFound(res, benchId) {
 /**
  * @apiDefine BenchInRequestBody
  * @apiParam (Request body) {String{3..50}} description The description of the bench 
-<<<<<<< HEAD
+
  * @apiParam (Request body) {Boolean{0..1}} backrest The backrest parameter (0 = No|1 = Yes)
  * @apiParam (Request body) {String{Wood, Metal, Stone, Marble, Plastic}} material The material of the bench (Wood,Metal,Stone,Marble,Plastic)
-=======
- * @apiParam (Request body) {Boolean{Boolean{[0 = false = no | 1 = true = yes]}} backrest The backrest parameter
- * @apiParam (Request body) {String{0..50}} material The material of the bench (Wood,Metal,Stone,Marble,Plastic)
->>>>>>> e243334bf72065cc0af0d80cbf6d355c34926e1e
  * @apiParam (Request body) {Number{0..5}} ergonomy The ergonomy mark of the bench
  * @apiParam (Request body) {Number{0..3000}} seats The number of seats on the bench
  * @apiParam (Request body) {String{0..50}} image The image of the bench
