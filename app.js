@@ -10,6 +10,8 @@ var usersRouter = require('./routes/users');
 var benchesRouter = require('./routes/benches');
 var votesRouter = require('./routes/votes');
 
+var cors = require('cors')
+
 var app = express();
 
 // view engine setup
@@ -26,6 +28,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'docs')));
 
+app.use(cors())
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/votes', votesRouter);
@@ -36,13 +40,7 @@ app.use(function(req, res, next) {
   next(createError(404));
 });
 
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", '*');
-  res.header("Access-Control-Allow-Credentials", true);
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-  res.header("Access-Control-Allow-Headers", 'Origin,X-Requested-With,Content-Type,Accept,content-type,application/json');
-  next();
-});
+ 
 
 // error handler
 app.use(function(err, req, res, next) {
