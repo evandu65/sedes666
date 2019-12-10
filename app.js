@@ -36,6 +36,14 @@ app.use(function(req, res, next) {
   next(createError(404));
 });
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", '*');
+  res.header("Access-Control-Allow-Credentials", true);
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.header("Access-Control-Allow-Headers", 'Origin,X-Requested-With,Content-Type,Accept,content-type,application/json');
+  next();
+});
+
 // error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
