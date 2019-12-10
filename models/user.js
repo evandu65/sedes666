@@ -10,19 +10,24 @@ const userSchema = new Schema({
     minlength: 3,
     maxlength: 50,
     validate:
-    [{
-      validator: validateUsernameUniqueness,
-      message:'Username {VALUE} already exists'
-    }],
+      [{
+        validator: validateUsernameUniqueness,
+        message: 'Username {VALUE} already exists'
+      }],
   },
   password: {
-    type : String,
+    type: String,
     required: true,
     minlength: 3,
-    maxlength:60,
+    maxlength: 60,
   },
-  registrationDate: { type: Date, default: Date.now  }, // Default value
-  meta: { // Nested document
+  // Default value
+  registrationDate: {
+    type: Date,
+    default: Date.now
+  },
+  // Nested document
+  meta: { 
     totalVote: Number,
   }
 }

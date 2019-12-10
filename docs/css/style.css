@@ -1,16 +1,17 @@
 /* ------------------------------------------------------------------------------------------
  * Content
  * ------------------------------------------------------------------------------------------ */
-body {
+ body {
   min-width: 980px;
   max-width: 1280px;
+  background : #1f1e1e;
 }
 
 body, p, a, div, th, td {
   font-family: "Source Sans Pro", sans-serif;
   font-weight: 400;
   font-size: 16px;
-  background-color : #e5c500
+  color : rgb(161, 161, 161);
 }
 
 td.code {
@@ -27,7 +28,7 @@ td.code {
 }
 
 p {
-  color: #000000;
+  color: rgb(161, 161, 161);
 }
 
 h1 {
@@ -49,7 +50,7 @@ h2 {
 }
 
 section {
-  border-top: 1px solid #000;
+  border-top: 1px solid #ebebeb;
   padding: 30px 0;
 }
 
@@ -259,15 +260,8 @@ pre code.sample-request-response-json {
   bottom: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  background-color: #e5c500;
+  background-color: #000;
   z-index: 10;
-}
-.sidenav > li.nav-header > a {
-  background-color : #e5c500 !important;
-}
-
-.sidenav-search{
-  background-color : #e5c500 !important;
 }
 
 .sidenav > li > a {
@@ -290,19 +284,18 @@ pre code.sample-request-response-json {
 
 .sidenav > li.nav-header > a {
   padding: 5px 15px;
-  border: 1px solid #e5e5e5;
+  border: 1px solid #000;
   width: 190px;
   font-family: "Source Sans Pro", sans-serif;
   font-weight: 700;
   font-size: 16px;
-  background-color: #ffffff;
+  background-color: #000;
 }
 
 .sidenav > li.active > a {
     position: relative;
     z-index: 2;
-    background-color: #000;
-    color: #ffffff;
+    background-color: #ffffff;
 }
 
 .sidenav > li.has-modifications a {
@@ -313,6 +306,9 @@ pre code.sample-request-response-json {
   border-left: #e5e5e5 4px solid;
 }
 
+.sidenav > li.nav-header > a {
+  color : #fff
+}
 /* ------------------------------------------------------------------------------------------
  * Side nav search
  * ------------------------------------------------------------------------------------------ */
@@ -321,7 +317,7 @@ pre code.sample-request-response-json {
   left: 0px;
   position: fixed;
   padding: 16px 20px 10px 20px;
-  background-color: #F5F5F5;
+  background-color: #000;
   z-index: 11;
 }
 
@@ -525,14 +521,6 @@ tr.del td {
  * ------------------------------------------------------------------------------------------ */
 ul.nav-tabs {
   margin: 0;
-}
-
-.nav-tabs{
-  border : #000; 
-}
-
-.nav-tabs>li.active>a{
-  background-color : #000;
 }
 
 p.deprecated span{

@@ -3,13 +3,17 @@ const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
 const voteSchema = new Schema({
     type: Boolean,
-    voteDate: { type: Date, default: Date.now  }, // Default value
+    // Default value
+    voteDate: {
+      type: Date,
+      default: Date.now 
+    }, 
     userId: {
       type: Schema.Types.ObjectId,
       required:true,
       validate: {
         // Validate that the userId is a valid ObjectId
-        // and references an existing person
+        // and references an existing user
         validator: validateUserId,
         message: function(props) { return props.reason.message; }
       }
