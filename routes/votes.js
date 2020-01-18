@@ -172,8 +172,7 @@ router.post('/', authenticate, function(req, res, next) {
       return next(err);
     }
     // Send the saved document in the response
-    publishRanking();
-    res.send(savedVote);
+    publishRanking(savedVote);
   });
 });
 ///////////////////////////////////////////////////////////////////////////////////////////

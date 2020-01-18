@@ -17,12 +17,10 @@ let currentSession;
 getRanking = 
 
 exports.publishRanking = function(params){
-
   if (currentSession) {
-    currentSession.publish(`${namespace}.updateRanking`, console.log("vote créé"));
+  currentSession.publish(`${namespace}.updateRanking`, [], params);
   }
-  
-}
+  };
 
 exports.createBackendDispatcher = function() {
 
