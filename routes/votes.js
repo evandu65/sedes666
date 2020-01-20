@@ -8,6 +8,7 @@ const debug = require('debug')('demo:votes');
 const {publishRanking} = require('../dispatcher')
 const secretKey = process.env.SECRET_KEY || 'changeme';
 const authenticate = require('../middlewares/auth')
+const benches = require('../routes/benches')
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 /**

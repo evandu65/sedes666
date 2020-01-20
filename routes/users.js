@@ -47,7 +47,7 @@ const authenticate = require('../middlewares/auth')
  *        }
  *     ]
  */
-router.get('/', authenticate, function (req, res, next) {
+router.get('/',  function (req, res, next) {
   // Parse the "page" param (default to 1 if invalid)
   let page = parseInt(req.query.page, 10);
   if (isNaN(page) || page < 1) {
