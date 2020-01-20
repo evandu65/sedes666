@@ -79,7 +79,7 @@ const benchSchema = new Schema({
 });
 
 function validateGeoJsonCoordinates(value) {
-  return Array.isArray(value) && value.length >= 2 && value.length <= 3 && value[0] >= -180 && value[0] <= 180 && value[1] >= -90 && value[1] <= 90;
+  return Array.isArray(value) && value.length >= 2 && value.length <= 3 && value[0] >= -90&& value[0] <= 90 && value[1] >= -180 && value[1] <= 180;
 }
 
 function validateUserId(value) {
